@@ -1,0 +1,18 @@
+.title {
+  font-size: 36rpx !important;
+  color: #fff !important;
+}
+
+.navBar {
+  background: #212121 !important;
+}
+
+video {
+  margin-top: 64px;
+  width: 100%;
+  height: calc(100vh - 64px);
+}
+
+page {
+  overflow: hidden;
+}

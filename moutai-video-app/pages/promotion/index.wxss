@@ -1,0 +1,98 @@
+/* pages/promotion/index.wxss */
+button{
+  background: none;
+  padding: 0;
+}
+button::after{
+  border: 0;
+  background: none;
+}
+button.button-hover{
+  background: none;
+}
+.promotion_box{
+  position: relative;
+}
+.promotion_box .back_img{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+}
+.person_box{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  height: 100vh;
+}
+.person_info_box{
+  height: 20vh;
+  text-align: center;
+  padding-top: 50rpx;
+  box-sizing: border-box;
+  position: relative;
+}
+.person_info_box .issue_btn{
+  background: #ff0000;
+  position: absolute;
+  top: 50%;
+  right: 30rpx;
+  z-index: 10;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+  margin: 0;
+  font-size: 24rpx;
+  color: #ffffff;
+}
+.person_avatar{
+  width:152rpx;
+  height:152rpx;
+  border:2px solid rgba(107,161,233,1);
+  border-radius:50%;
+  margin: 0 auto;
+  padding: 10rpx;
+  box-sizing: border-box;
+}
+.person_avatar image{
+  display: block;
+  width: 100%;
+  height: 100% !important;
+  background: #999;
+  border-radius: 50%;
+}
+.person_name{
+  color: #fff;
+  font-size: 40rpx;
+}
+
+.mine image{
+  position: absolute;
+  width: 81rpx;
+  height: 98rpx;
+  right: 30rpx;
+  bottom: 22rpx;
+  z-index: 21;
+}
+
+.browse_box{
+  height: 80vh;
+  padding: 20rpx 0 0 80rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-end;
+}
+.scroll_view_H{
+  white-space: nowrap;
+}
+.scroll_item{
+  display: inline-block;
+  width: 300rpx;
+  margin-right: 30rpx;
+}
+.scroll_item image{
+  width: 100%;
+}

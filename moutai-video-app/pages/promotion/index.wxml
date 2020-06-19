@@ -1,0 +1,39 @@
+<!--pages/promotion/index.wxml-->
+<view>
+  <view class="promotion_box">
+    <image class="back_img" src="../../assets/back.jpg" mode="aspectFill"></image>
+    <view class="person_box">
+      <view class="person_info_box">
+        <button open-type="getUserInfo" bind:getuserinfo="userInfo" lang='zh_CN'>
+          <view class="person_avatar"><image src="{{avatar}}" mode="widthFix"></image></view>
+          <view class="person_name">{{id_title}} {{name}}</view>
+        </button>
+        <!-- <button wx:if="{{identity == 'boss' && is_issue == 1}}" type="primary" bindtap="toIssue" class="issue_btn" size="mini">从编辑发行</button> -->
+      </view>
+
+      <view wx:if="{{is_home}}">
+        <promotion-list list="{{promotion_list}}" bind:myevent="getListClick"></promotion-list>
+      </view>
+      <view wx:else>
+        <!-- 促销券编辑 -->
+        <block wx:if="{{is_list == 0}}">
+          <view class="browse_box">
+            <scroll-view bindscrolltolower="getCouponMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
+              <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_list}}" wx:key="index"><image src="{{item.src}}" mode="widthFix"></image></view>
+            </scroll-view>
+          </view>
+        </block>
+        <!-- 促销券发行 -->
+        <block wx:else>
+          <view class="browse_box">
+            <scroll-view bindscrolltolower="getIssuedMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
+              <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{issued_list}}" wx:key="index"><image src="{{item.src}}" mode="widthFix"></image></view>
+            </scroll-view>
+          </view>
+        </block>
+      </view>
+      
+      <view class="mine" catchtap="toUser"><image src="../../assets/mine.png" mode="widthFix"></image></view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,4 @@
+<!--pages/couponDetail/index.wxml-->
+<view>
+  <image class="coupon_img" src="{{src}}" mode="widthFix"></image>
+</view>

@@ -117,50 +117,69 @@ Page({
   chooseLicense(e){
     var that = this;
     publicFun.getImage(1,false,'album').then((res)=>{
-      uploadFile({
-        file: res[0]
-      }).then((imgRes)=>{
-        console.log(imgRes)
-      })
+      // uploadFile({
+      //   file: res[0]
+      // }).then((imgRes)=>{
+      //   console.log(imgRes)
+      // })
       wx.uploadFile({
-        url: 'http://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
+        url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
         name: 'file',
         success (imgRes){
-          console.log(imgRes)
-          
+          that.setData({
+            license: imgRes.data,
+            is_license: 1
+          })
         }
-      })
-      that.setData({
-        license: res[0],
-        is_license: 1
       })
     })
   },
   chooseImageFun(e){
     var that = this;
     publicFun.getImage(1,false,'album').then((res)=>{
-      that.setData({
-        back_img: res[0],
-        is_back: 1
+      wx.uploadFile({
+        url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
+        filePath: res[0],
+        name: 'file',
+        success (imgRes){
+          that.setData({
+            back_img: imgRes.data,
+            is_back: 1
+          })
+        }
       })
     })
   },
   chooseCardImage(e){
     var that = this;
     publicFun.getImage(1,false,'album').then((res)=>{
-      that.setData({
-        card_img: res[0],
-        is_card: 1
+      wx.uploadFile({
+        url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
+        filePath: res[0],
+        name: 'file',
+        success (imgRes){
+          that.setData({
+            card_img: imgRes.data,
+            is_card: 1
+          })
+        }
       })
     })
   },
   chooseBookImage(e){
     var that = this;
     publicFun.getImage(1,false,'album').then((res)=>{
-      that.setData({
-        book_img: res[0],
-        is_book: 1
+      wx.uploadFile({
+        url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
+        filePath: res[0],
+        name: 'file',
+        success (imgRes){
+          that.setData({
+            book_img: imgRes.data,
+            is_book: 1
+          })
+        }
       })
     })
   },

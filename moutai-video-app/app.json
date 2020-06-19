@@ -1,15 +1,15 @@
 {
   "pages": [
     "pages/promotion/index",
+    "pages/userInfo/index",
     "pages/editCoupon/index",
     "pages/editIssue/index",
     "pages/merchant/index",
-    "pages/demo/index",
     "pages/myAgent/index",
     "pages/mySeller/index",
-    "pages/userInfo/index",
-    "pages/couponDetail/index",
     "pages/index/index",
+    "pages/demo/index",
+    "pages/couponDetail/index",
     "pages/myVideo/index",
     "pages/toChangeVideo/index",
     "pages/changeVideo/index",

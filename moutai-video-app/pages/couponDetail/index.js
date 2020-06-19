@@ -1,11 +1,17 @@
 // pages/couponDetail/index.js
+import {
+  showUserQRCode
+} from '../../api/user.js'
+import { base64src } from '../../utils/base64src.js'
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    src: ''
+    src: '',
+    user_code: '',
+    is_buy: 0 //是否是购买进入
   },
 
   /**
@@ -14,6 +20,25 @@ Page({
   onLoad: function (options) {
     this.setData({
       src: options.src
+    })
+    console.log(options.type);
+    this.getQrCode();
+    if(options.type == 'buy'){
+      this.setData({
+        is_buy: 1
+      })
+    }
+  },
+  //获取二维码
+  getQrCode(){
+    showUserQRCode().then(res=>{
+      const base64ImgUrl = "data:image/png;base64," + res.data;
+      base64src(base64ImgUrl,1,ress=>{
+        this.data.user_code = ress;
+        this.setData({
+          user_code: this.data.user_code
+        })
+      })
     })
   },
 

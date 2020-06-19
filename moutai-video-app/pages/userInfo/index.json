@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "只是为了",
   "usingComponents": {
+    "van-nav-bar": "@vant/weapp/nav-bar/index",
     "van-cell": "@vant/weapp/cell/index",
     "van-cell-group": "@vant/weapp/cell-group/index"
   }

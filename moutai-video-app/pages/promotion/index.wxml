@@ -1,13 +1,16 @@
 <!--pages/promotion/index.wxml-->
 <view>
   <view class="promotion_box">
-    <image class="back_img" src="../../assets/back.jpg" mode="aspectFill"></image>
+    <image class="back_img" src="{{back_img}}" mode="aspectFill"></image>
     <view class="person_box">
       <view class="person_info_box">
         <button open-type="getUserInfo" bind:getuserinfo="userInfo" lang='zh_CN'>
           <view class="person_avatar"><image src="{{avatar}}" mode="widthFix"></image></view>
           <view class="person_name">{{id_title}} {{name}}</view>
         </button>
+        <van-button wx:if="{{identity != 'seller'}}" bind:click="scanCode" color="#37444A" icon="scan" class="scanCode" type="primary" size="small">
+          扫码播放视频
+        </van-button>
         <!-- <button wx:if="{{identity == 'boss' && is_issue == 1}}" type="primary" bindtap="toIssue" class="issue_btn" size="mini">从编辑发行</button> -->
       </view>
 

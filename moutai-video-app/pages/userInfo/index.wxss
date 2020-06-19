@@ -19,6 +19,7 @@ button.button-hover{
   justify-content: center;
   align-items: center;
   margin-bottom: 10rpx;
+  /* margin-top: 64px; */
 }
 
 .user {
@@ -76,6 +77,12 @@ button.button-hover{
 .scroll_item image{
   width: 100%;
 }
+.scroll_item button{
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 10rpx;
+  margin: 20rpx auto 0;
+}
 
 .promotion_list_box{
   box-sizing: border-box;
@@ -117,4 +124,32 @@ button.button-hover{
 .nav_content image{
   display: block;
   margin: 0 auto;
+}
+
+.scanCode {
+  /* position: fixed; */
+  /* bottom: 70rpx; */
+  display: block;
+  width: 90%;
+  margin: 20rpx auto;
+  /* left: calc(50% - 40%); */
+  line-height: 88rpx;
+}
+
+.title {
+  font-size: 36rpx !important;
+  color: #fff !important;
+}
+
+.navBar {
+  background: #212121 !important;
+}
+
+.mine image{
+  position: absolute;
+  width: 81rpx;
+  height: 98rpx;
+  right: 30rpx;
+  bottom: 22rpx;
+  z-index: 21;
 }

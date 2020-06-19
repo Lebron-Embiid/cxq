@@ -243,7 +243,22 @@ export function uploadFile(data) {
     data
   })
 }
-
+//用户身份二维码
+export function showUserQRCode(data) {
+  return request({
+    url: "/applet/user/showUserQRCode",
+    method: "POST",
+    data
+  })
+}
+//促销券浏览
+export function queryCouponBrowse(data) {
+  return request({
+    url: "/applet/video/queryCouponBrowse",
+    method: "GET",
+    data
+  })
+}
 
 
 

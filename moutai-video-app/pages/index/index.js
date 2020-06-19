@@ -23,12 +23,17 @@ Page({
   scanCode() {
     wx.scanCode({
       success(res) {
-        let number = wx.getQueryString({
+        console.log('扫码返回的参数'+res.result);
+        let data = wx.getQueryString({
           url: res.result,
-          name: "number"
+          name: "data"
         });
+        wx.setStorage({
+          data: data,
+          key: 'params',
+        })
         wx.navigateTo({
-          url: '/pages/demo/index?number=' + number
+          url: '/pages/demo/index?data=' + data
         })
       }
     })

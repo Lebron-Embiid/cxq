@@ -39,7 +39,10 @@ Page({
     pages: 1,
     status: 1,
     is_pass: 0,
-    is_issue: 0
+    is_issue: 0,
+    back_img: '../../assets/back.jpg',
+    dataStr: '',
+    consumerId: ''
   },
 
   /**
@@ -126,8 +129,8 @@ Page({
           promotion_list = [
             {icon: '/assets/nav_icon9.png',title: '我当销售员'},
             {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-            {icon: '/assets/nav_icon6.png',title: '我发促销券'},
-            {icon: '/assets/nav_icon6.png',title: '我做编辑人'}
+            {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+            // {icon: '/assets/nav_icon6.png',title: '我做编辑人'}
           ]
         }
         this.setData({
@@ -439,32 +442,60 @@ Page({
       // 销售员
       if(e.detail.index == 0){
         // 销售
+        var that = this;
         wx.scanCode({
           onlyFromCamera: true,
-          success (res) {
-            wx.scanCode({
-              onlyFromCamera: true,
-              success (res) {
-
-              }
-            })
-            couponSell({
-              consumerId: '',//消费者ID
-              data: ''//要购买的促销劵二维码
-            }).then(res=>{
-              
-            })
+          success(res) {
+            console.log(111111111);
+            // console.log('扫码返回的参数: '+res.result.length);
+            console.log(res.result.length)
+            if(res.result.length == 28){
+              that.setData({
+                consumerId: res.result
+              })
+              console.log(that.data.consumerId,that.data.dataStr);
+            }else{
+              let data = wx.getQueryString({
+                url: res.result,
+                name: "data"
+              });
+              that.setData({
+                dataStr: data
+              })
+              console.log(that.data.consumerId,that.data.dataStr);
+            }
+            if(that.data.dataStr != '' && that.data.consumerId != ''){
+              couponSell({
+                consumerId: that.data.consumerId,//消费者ID
+                data: that.data.dataStr//要购买的促销劵二维码
+              }).then(resg=>{
+                if(resg.code == 200){
+    
+                }
+              })
+            }
+            // console.log('扫码返回的参数2'+data);
           }
         })
       }
       if(e.detail.index == 1){
         // 验证
-        couponConsume({
-          bossId: '',//老板ID
-          consumerId: '',//消费者ID
-          sellerId: ''//销售员ID
-        }).then((res)=>{
-          
+        wx.scanCode({
+          onlyFromCamera: true,
+          success (res) {
+            console.log('扫码返回的参数1'+JSON.stringify(res.result));
+            let data = wx.getQueryString({
+              url: res.result,
+              name: "data"
+            });
+            couponConsume({
+              data: data //二维码信息
+            }).then((resg)=>{
+              if(resg.code == 200){
+    
+              }
+            })
+          }
         })
       }
       if(e.detail.index == 2){
@@ -523,6 +554,24 @@ Page({
         // 我做编辑人
       }
     }
+  },
+  scanCode() {
+    wx.scanCode({
+      success(res) {
+        console.log('扫码返回的参数'+res.result);
+        let data = wx.getQueryString({
+          url: res.result,
+          name: "data"
+        });
+        wx.setStorage({
+          data: data,
+          key: 'params',
+        })
+        wx.navigateTo({
+          url: '/pages/demo/index?data=' + data
+        })
+      }
+    })
   },
   // 下载图片  
   downFile(url){  

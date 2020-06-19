@@ -3,9 +3,12 @@ import {
   appRole,
   getCode,
   getPrivateKey,
+  couponCollect,
   queryCouponCollectList,
   queryMyCouponList,
-  queryBusinessInfo
+  queryBusinessInfo,
+  queryCouponBrowse,
+  querySellCouponList
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 Page({
@@ -18,15 +21,15 @@ Page({
     name: '',
     phone: '',
     identity: '',//boss agent seller 
-    nav_list: ['收藏促销券','已购销售券','我想'],
+    nav_list: ['浏览促销券','收藏促销券','已购销售券'],//,'我想'
     nav_active: 0,
+    look_list: [],
     coupon_list: [],
     collect_list: [],
     promotion_list:[
       {icon: '/assets/nav_icon9.png',title: '我当销售员'},
       {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-      {icon: '/assets/nav_icon6.png',title: '我发促销券'},
-      {icon: '/assets/nav_icon6.png',title: '我做编辑人'}
+      {icon: '/assets/nav_icon6.png',title: '我发促销券'}
     ],
     code_img: [],
     key: '',
@@ -42,21 +45,9 @@ Page({
     console.log(wx.getStorageSync('token'));
     // this.userInfo();
 
-    
-    //获取二维码
-    // getCode().then(res=>{
-    //   const base64ImgUrl = "data:image/png;base64," + res.data;
-    //   base64src(base64ImgUrl,1,ress=>{
-    //     this.data.code_img[0] = ress;
-    //     this.setData({
-    //       code_img: this.data.code_img
-    //     })
-    //   })
-    // })
+    // this.getLookList();
   },
   onShow() {
-    this.getCollectList();
-
     // queryBusinessInfo().then((res)=>{
     //   if(res.code == 200){
     //     if(res.data.status == '待审批'){
@@ -75,8 +66,17 @@ Page({
         })
       }
       if(res.code == 200){
-        if(res.data.type != null){
-          this.data.nav_list = ['收藏促销券','已购销售券'];
+        if(res.data.type == null){
+          this.data.nav_list = ['浏览促销券','收藏促销券','已购销售券'];
+        }
+        if(res.data.type == 'seller'){
+          this.data.nav_list = ['已出售销售券'];
+        }
+        if(res.data.type == 'agent'){
+          this.data.nav_list = ['浏览促销券','收藏促销券'];
+        }
+        if(res.data.type == 'boss'){
+          this.data.nav_list = ['浏览促销券'];
         }
         this.setData({
           nav_list: this.data.nav_list,
@@ -85,6 +85,66 @@ Page({
           phone: res.data.phone,
           identity: res.data.type
         })
+
+        if(this.data.identity != 'seller'){
+          this.getLookList();
+        }
+        if(this.data.identity == 'seller'){
+          this.getBuyList();
+        }
+      }
+    }).catch(err=>{
+      wx.reLaunch({
+        url: '/pages/login/index',
+      })
+    })
+  },
+  scanCode() {
+    wx.scanCode({
+      success(res) {
+        console.log('扫码返回的参数'+res.result);
+        let data = wx.getQueryString({
+          url: res.result,
+          name: "data"
+        });
+        wx.setStorage({
+          data: data,
+          key: 'params',
+        })
+        wx.navigateTo({
+          url: '/pages/demo/index?data=' + data
+        })
+      }
+    })
+  },
+  toPromotion(e) {
+    console.log(e)
+    wx.navigateTo({
+      url: '/pages/promotion/index'
+    })
+  },
+  getLookList() {
+    //浏览列表
+    queryCouponBrowse({
+      pageNum: this.data.page,
+      pageSize: 5
+    }).then(lookres=>{
+      if(lookres.code == 200){
+        for(let i in lookres.data.records){
+          let item = lookres.data.records[i];
+          let base64 = "data:image/png;base64," + item.rqcode;
+          base64src(base64,item.certId,ress=>{
+            this.data.look_list.push({
+              id: item.certId,
+              couponId: item.couponId,
+              coupon: ress
+            });
+            this.setData({
+              look_list: this.data.look_list,
+              pages: lookres.data.pages
+            })
+          })
+        }
       }
     })
   },
@@ -94,22 +154,81 @@ Page({
       pageNum: this.data.page,
       pageSize: 5
     }).then(res=>{
-      this.setData({
-        collect_list: this.data.collect_list.concat(res.data.records),
-        pages: res.data.pages
-      })
+      if(res.code == 200){
+        for(let i in res.data.records){
+          let item = res.data.records[i];
+          let base64 = "data:image/png;base64," + item.rqcode;
+          base64src(base64,item.couponId,ress=>{
+            this.data.collect_list.push({
+              id: item.couponId,
+              coupon: ress
+            });
+            this.setData({
+              collect_list: this.data.collect_list,
+              pages: res.data.pages
+            })
+          })
+        }
+      }
     })
   },
   getBuyList(){
-    queryMyCouponList({
-      pageNum: this.data.page,
-      pageSize: 5
-    }).then(res=>{
-      this.setData({
-        coupon_list: this.data.coupon_list.concat(res.data.records),
-        pages: res.data.pages
+    if(this.data.identity == null){
+      queryMyCouponList({
+        pageNum: this.data.page,
+        pageSize: 5
+      }).then(buyres=>{
+        if(buyres.code == 200){
+          for(let i in buyres.data.records){
+            let item = buyres.data.records[i];
+            let base64 = "data:image/png;base64," + item.rqcode;
+            base64src(base64,item.couponId,ress=>{
+              this.data.coupon_list.push({
+                id: item.couponId,
+                coupon: ress
+              });
+              this.setData({
+                coupon_list: this.data.coupon_list,
+                pages: buyres.data.pages
+              })
+            })
+          }
+          // let coupon_list = this.data.coupon_list;
+          // if(this.data.page == 1){
+          //   coupon_list = res.data.records;
+          // }else{
+          //   coupon_list = coupon_list.concat(res.data.records);
+          // }
+          // this.setData({
+          //   coupon_list: coupon_list,
+          //   pages: res.data.pages
+          // })
+        }
       })
-    })
+    }
+    if(this.data.identity == 'seller'){
+      querySellCouponList({
+        pageNum: this.data.page,
+        pageSize: 5
+      }).then((res)=>{
+        if(res.code == 200){
+          for(let i in res.data.records){
+            let item = res.data.records[i];
+            let base64 = "data:image/png;base64," + item.rqcode;
+            base64src(base64,item.couponId,ress=>{
+              this.data.coupon_list.push({
+                id: item.couponId,
+                coupon: ress
+              });
+              this.setData({
+                coupon_list: this.data.coupon_list,
+                pages: res.data.pages
+              })
+            })
+          }
+        }
+      })
+    }
   },
   userInfo() {
     wx.getUserInfo({
@@ -127,14 +246,43 @@ Page({
   clickNav(e){
     this.setData({
       nav_active: e.currentTarget.dataset.index,
-      collect_list: [],
-      coupon_list: [],
       page: 1
     })
-    if(this.data.nav_active == 0){
-      this.getCollectList();
-    }else if(this.data.nav_active == 1){
-      this.getBuyList();
+    
+    if(res.data.type == null){
+      if(this.data.nav_active == 0){
+        this.getLookList();
+      }else if(this.data.nav_active == 1){
+        this.getCollectList();
+      }else{
+        this.getBuyList();
+      }
+    }
+    if(res.data.type == 'seller'){
+      if(this.data.nav_active == 0){
+        this.getBuyList();//已出售促销券
+      }
+    }
+    if(res.data.type == 'agent'){
+      if(this.data.nav_active == 0){
+        this.getLookList();
+      }else{
+        this.getCollectList();
+      }
+    }
+    if(res.data.type == 'boss'){
+      if(this.data.nav_active == 0){
+        this.getLookList();
+      }
+    }
+  },
+  getLookMore(){
+    if(this.data.page<this.data.pages){
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      this.getLookList();
     }
   },
   getCouponMore(){
@@ -154,6 +302,32 @@ Page({
       })
       this.getCollectList();
     }
+  },
+  selectLook(e){
+    let index = e.currentTarget.dataset.index;
+    wx.navigateTo({
+      url: '/pages/couponDetail/index?type=buy&src='+this.data.look_list[index].coupon,
+    })
+  },
+  toCollect(e){
+    let item = e.currentTarget.dataset.item;
+    couponCollect({
+      certId: item.certId,
+      couponId: item.couponId
+    }).then((res)=>{
+      if(res.code == 200){
+        wx.showToast({
+          title: '收藏成功！',
+          icon: 'none'
+        })
+      }
+    })
+  },
+  selectCollect(e){
+    let index = e.currentTarget.dataset.index;
+    wx.navigateTo({
+      url: '/pages/couponDetail/index?src='+this.data.collect_list[index].coupon,
+    })
   },
   selectCoupon(e){
     let index = e.currentTarget.dataset.index;

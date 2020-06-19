@@ -1,4 +1,7 @@
 <!--pages/couponDetail/index.wxml-->
 <view>
+  <block wx:if="{{is_buy == 1}}">
+    <image src="{{user_code}}" class="user_code" mode="widthFix"></image>
+  </block>
   <image class="coupon_img" src="{{src}}" mode="widthFix"></image>
 </view>

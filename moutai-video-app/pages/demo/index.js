@@ -1,6 +1,7 @@
 import {
   qrCodeFileList,
-  weseeAnalysis
+  weseeAnalysis,
+  queryVideoUrl
 } from '../../api/qrCode.js'
 Page({
   data: {
@@ -9,9 +10,21 @@ Page({
     index: 0
   },
   onLoad(options) {
-    if (options.q) {
+    let data = wx.getStorageSync('params');
+    console.log('扫码接收的参数'+data);
+    queryVideoUrl({
+      data: data
+    }).then((res)=>{
+      if(res.code == 200){
+        this.setData({
+          url: res.data[0]
+        })
+      }
+    })
+    return;
+    if (options.data) {
       //解析url地址
-      let newUrl = decodeURIComponent(options.q);
+      let newUrl = decodeURIComponent(options.data);
       //获取对应number参数
       let number = wx.getQueryString({
         url: newUrl,
@@ -22,6 +35,9 @@ Page({
     } else {
       this.queryVideo(options.number);
     }
+  },
+  onUnload(){
+    wx.removeStorageSync('params');
   },
   queryVideo(number) {
     qrCodeFileList({
@@ -65,7 +81,7 @@ Page({
   },
   onClickLeft() {
     wx.redirectTo({
-      url: '/pages/index/index'
+      url: '/pages/userInfo/index'
     })
   }
 })

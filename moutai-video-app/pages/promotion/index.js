@@ -23,12 +23,12 @@ Page({
    * 页面的初始数据
    */
   data: {
-    avatar: '',
+    avatar: '/assets/avatar.svg',
     name: '',
     phone: '',
     coupon_id: '',
     is_home: true,
-    identity: '',//boss agent seller 
+    identity: null,//boss agent seller 
     id_title: '',
     promotion_list: [],
     coupon_list: [],
@@ -86,8 +86,12 @@ Page({
 
     getInfo().then(res=>{
       if(res.code == 401){
-        wx.reLaunch({
-          url: "/pages/login/index"
+        let promotion = [{icon: '/assets/nav_icon9.png',title: '我当销售员'},
+          {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+          {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+        ];
+        this.setData({
+          promotion_list:  promotion
         })
       }
       if(res.code == 200){
@@ -143,9 +147,13 @@ Page({
         })
       }
     }).catch(err=>{
-      wx.reLaunch({
-        url: "/pages/login/index"
-      })
+      let promotion = [{icon: '/assets/nav_icon9.png',title: '我当销售员'},
+          {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+          {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+        ];
+        this.setData({
+          promotion_list:  promotion
+        })
     })
     // .finally(sfs=>{
     //   wx.reLaunch({
@@ -153,7 +161,9 @@ Page({
     //   })
     // })
   },
-
+  getUserLogin(){
+    this.onShow();
+  },
   /**
    * 生命周期函数--监听页面隐藏
    */
@@ -519,35 +529,72 @@ Page({
     }else{
       // 消费者
       if(e.detail.index == 0){
-        // 申请成为销售员
-        appRole({
-          type: 'seller'
-        }).then((res)=>{
-          if(res.code == 200){
+        wx.checkSession({
+          success () {
+            //session_key 未过期，并且在本生命周期一直有效
+            // 申请成为销售员
+            appRole({
+              type: 'seller'
+            }).then((res)=>{
+              if(res.code == 200){
+                wx.showToast({
+                  title: '请求成功',
+                  icon: 'none'
+                })
+              }
+            })
+          },
+          fail () {
+            // session_key 已经失效，需要重新执行登录流程
             wx.showToast({
-              title: '请求成功',
+              title: '请先登录',
               icon: 'none'
             })
           }
         })
       }
       if(e.detail.index == 1){
-        // 申请成为代理人
-        appRole({
-          type: 'agent'
-        }).then((res)=>{
-          if(res.code == 200){
+        wx.checkSession({
+          success () {
+            //session_key 未过期，并且在本生命周期一直有效
+            // 申请成为代理人
+            appRole({
+              type: 'agent'
+            }).then((res)=>{
+              if(res.code == 200){
+                wx.showToast({
+                  title: '请求成功',
+                  icon: 'none'
+                })
+              }
+            })
+          },
+          fail () {
+            // session_key 已经失效，需要重新执行登录流程
             wx.showToast({
-              title: '请求成功',
+              title: '请先登录',
               icon: 'none'
             })
           }
         })
       }
       if(e.detail.index == 2){
-        // 我发促销券
-        wx.navigateTo({
-          url: '/pages/merchant/index?pass='+this.data.is_pass
+        let that = this;
+        wx.checkSession({
+          success () {
+            //session_key 未过期，并且在本生命周期一直有效
+            // 我发促销券
+            wx.navigateTo({
+              url: '/pages/merchant/index?pass='+that.data.is_pass
+            })
+          },
+          fail () {
+            // session_key 已经失效，需要重新执行登录流程
+            wx.showToast({
+              title: '请先登录',
+              icon: 'none'
+            })
+          }
         })
       }
       if(e.detail.index == 3){

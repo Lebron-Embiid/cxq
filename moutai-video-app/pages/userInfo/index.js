@@ -17,7 +17,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    avatar: '',
+    avatar: '/assets/avatar.svg',
     name: '',
     phone: '',
     identity: '',//boss agent seller 
@@ -61,9 +61,7 @@ Page({
     //获取用户信息
     getInfo().then(res=>{
       if(res.code == 401){
-        wx.reLaunch({
-          url: '/pages/login/index',
-        })
+        
       }
       if(res.code == 200){
         if(res.data.type == null){
@@ -94,10 +92,11 @@ Page({
         }
       }
     }).catch(err=>{
-      wx.reLaunch({
-        url: '/pages/login/index',
-      })
+      
     })
+  },
+  getUserLogin(){
+    this.onShow();
   },
   scanCode() {
     wx.scanCode({

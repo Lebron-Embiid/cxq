@@ -1,5 +1,6 @@
 {
   "usingComponents": {
-    "promotion-list": "../../components/promotionList"
+    "promotion-list": "/components/promotionList",
+    "user-btn": "/components/user-btn"
   }
 }

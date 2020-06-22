@@ -3,10 +3,10 @@
 </van-nav-bar> -->
 <view class="back">
   <view class="user">
-    <button class="d-class" open-type="getUserInfo" bind:getuserinfo="userInfo" lang='zh_CN'>
+    <user-btn bind:mylogin="getUserLogin">
       <van-image custom-class="avatar" round width="140rpx" height="140rpx" src="{{avatar}}" />
-      <text class="name">{{name}}</text>
-    </button>
+      <text class="name">{{name?name:'点击登录账户'}}</text>
+    </user-btn>
   </view>
 </view>
 <view>

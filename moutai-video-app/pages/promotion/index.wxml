@@ -8,6 +8,9 @@
           <view class="person_avatar"><image src="{{avatar}}" mode="widthFix"></image></view>
           <view class="person_name">{{id_title}} {{name?name:'点击登录账户'}}</view>
         </user-btn>
+        <van-button wx:if="{{identity != null}}" bind:click="toMyHouse" color="#37444A" class="left_btn" type="primary" size="small">
+          {{!is_click?'我的商家':'我的主页'}}
+        </van-button>
         <van-button wx:if="{{identity != 'seller'}}" bind:click="scanCode" color="#37444A" icon="scan" class="scanCode" type="primary" size="small">
           扫码播放视频
         </van-button>

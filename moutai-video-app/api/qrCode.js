@@ -27,6 +27,15 @@ export function queryVideoUrl(params) {
   })
 }
 
+//扫码看视频(未登录)
+export function queryVideoUrl1(params) {
+  return request({
+    url: "/manage/queryVideoUrl",
+    method: "GET",
+    params
+  })
+}
+
 //修改二维码视频链接
 export function updateCodeVideoList(params) {
   return request({

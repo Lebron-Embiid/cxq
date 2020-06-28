@@ -1,7 +1,8 @@
 import {
   qrCodeFileList,
   weseeAnalysis,
-  queryVideoUrl
+  queryVideoUrl,
+  queryVideoUrl1
 } from '../../api/qrCode.js'
 Page({
   data: {
@@ -10,17 +11,58 @@ Page({
     index: 0
   },
   onLoad(options) {
-    let data = wx.getStorageSync('params');
-    console.log('扫码接收的参数'+data);
-    queryVideoUrl({
-      data: data
-    }).then((res)=>{
-      if(res.code == 200){
-        this.setData({
-          url: res.data[0]
-        })
-      }
-    })
+    // console.log('微信扫码接收'+JSON.stringify(options.q))
+    var data = '';
+    if(wx.getStorageSync('params')){
+      data = wx.getStorageSync('params');
+      console.log('扫码接收的参数'+data);
+    }else{
+      //解析url地址
+      let newUrl = decodeURIComponent(options.q);
+      //获取对应number参数
+      data = wx.getQueryString({
+        url: newUrl,
+        name: "data"
+      });
+      console.log('微信扫码接收的参数'+data);
+    }
+    // let data = wx.getStorageSync('params');
+    // console.log('扫码接收的参数'+data);
+    if(wx.getStorageSync('check') == 1){
+      console.log('登录扫码返回的接口数据：')
+      queryVideoUrl({
+        data: data
+      }).then((res)=>{
+        console.log('已登录调用的接口：'+JSON.stringify(res))
+        if(res.code == 200){
+          let newData = [];
+          res.data.forEach(item => {
+            newData.push(item)
+          })
+          this.setData({
+            urlLisr: newData,
+            url: newData[0]
+          })
+        }
+      })
+    }else{
+      console.log('微信扫码/未登录扫码返回的接口数据：')
+      queryVideoUrl1({
+        data: data
+      }).then((res)=>{
+        if(res.code == 200){
+          let newData = [];
+          res.data.forEach(item => {
+            newData.push(item)
+          })
+          console.log('未登录调用的接口：'+JSON.stringify(newData))
+          this.setData({
+            urlLisr: newData,
+            url: newData[0]
+          })
+        }
+      })
+    }
     return;
     if (options.data) {
       //解析url地址
@@ -67,7 +109,7 @@ Page({
     })
   },
   nextVideo() {
-    if (this.data.index >= this.data.urlLisr.length - 1) {
+    if (this.data.index == this.data.urlLisr.length - 1) {
       this.setData({
         index: 0,
         url: this.data.urlLisr[0]
@@ -81,7 +123,7 @@ Page({
   },
   onClickLeft() {
     wx.redirectTo({
-      url: '/pages/userInfo/index'
+      url: '/pages/promotion/index'
     })
   }
 })

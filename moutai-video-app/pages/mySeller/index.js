@@ -2,7 +2,8 @@
 import {
   queryMemberList,
   getBrowseCert,
-  memberManage
+  memberManage,
+  applicationMemberList
 } from '../../api/user.js'
 Page({
 

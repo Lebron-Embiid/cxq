@@ -8,7 +8,10 @@ import {
   queryMyCouponList,
   queryBusinessInfo,
   queryCouponBrowse,
-  querySellCouponList
+  querySellCouponList,
+  queryCouponUseList,
+  querySellCouponListBySeller,
+  queryUseCouponListBySeller
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 Page({
@@ -26,6 +29,8 @@ Page({
     look_list: [],
     coupon_list: [],
     collect_list: [],
+    sellerList1: [],
+    sellerList2: [],
     promotion_list:[
       {icon: '/assets/nav_icon9.png',title: '我当销售员'},
       {icon: '/assets/nav_icon8.png',title: '我做代理人'},
@@ -64,20 +69,21 @@ Page({
         
       }
       if(res.code == 200){
+        let nav_list = [];
         if(res.data.type == null){
-          this.data.nav_list = ['浏览促销券','收藏促销券','已购销售券'];
+          nav_list = ['浏览促销券','收藏促销券','已购促销券'];
         }
         if(res.data.type == 'seller'){
-          this.data.nav_list = ['已出售销售券'];
+          nav_list = ['已出售促销券','已验收促销券'];
         }
         if(res.data.type == 'agent'){
-          this.data.nav_list = ['浏览促销券','收藏促销券'];
+          nav_list = ['浏览促销券','收藏促销券'];
         }
         if(res.data.type == 'boss'){
-          this.data.nav_list = ['浏览促销券'];
+          nav_list = ['浏览促销券'];
         }
         this.setData({
-          nav_list: this.data.nav_list,
+          nav_list: nav_list,
           avatar: res.data.headPortraitLink,
           name: res.data.nickname,
           phone: res.data.phone,
@@ -132,7 +138,7 @@ Page({
         for(let i in lookres.data.records){
           let item = lookres.data.records[i];
           let base64 = "data:image/png;base64," + item.rqcode;
-          base64src(base64,item.certId,ress=>{
+          base64src(base64,item.couponId,ress=>{
             this.data.look_list.push({
               id: item.certId,
               couponId: item.couponId,
@@ -178,6 +184,7 @@ Page({
         pageSize: 5
       }).then(buyres=>{
         if(buyres.code == 200){
+          console.log('已购促销券返回的json数据：'+JSON.stringify(buyres.data))
           for(let i in buyres.data.records){
             let item = buyres.data.records[i];
             let base64 = "data:image/png;base64," + item.rqcode;
@@ -206,25 +213,68 @@ Page({
       })
     }
     if(this.data.identity == 'seller'){
-      querySellCouponList({
+      querySellCouponListBySeller({
         pageNum: this.data.page,
-        pageSize: 5
+        pageSize: 10
+      }).then((res)=>{
+        console.log('已出售促销券返回的json数据：'+JSON.stringify(res.data))
+        if(res.code == 200){
+          this.setData({
+            sellerList1: res.data.records,
+            pages: res.data.pages
+          })
+        }
+      })
+    }
+  },
+  getConsumeList(){
+    queryUseCouponListBySeller({
+      pageNum: this.data.page,
+      pageSize: 10
+    }).then((res)=>{
+      console.log('已验收促销券返回的json数据：'+JSON.stringify(res.data))
+      if(res.code == 200){
+        this.setData({
+          sellerList2: res.data.records,
+          pages: res.data.pages
+        })
+      }
+    })
+  },
+  getSellerListMore1(){
+    if(this.data.page<this.data.pages){
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      querySellCouponListBySeller({
+        pageNum: this.data.page,
+        pageSize: 10
       }).then((res)=>{
         if(res.code == 200){
-          for(let i in res.data.records){
-            let item = res.data.records[i];
-            let base64 = "data:image/png;base64," + item.rqcode;
-            base64src(base64,item.couponId,ress=>{
-              this.data.coupon_list.push({
-                id: item.couponId,
-                coupon: ress
-              });
-              this.setData({
-                coupon_list: this.data.coupon_list,
-                pages: res.data.pages
-              })
-            })
-          }
+          this.setData({
+            sellerList1: this.data.sellerList1.concat(res.data.records),
+            pages: res.data.pages
+          })
+        }
+      })
+    }
+  },
+  getSellerListMore2(){
+    if(this.data.page<this.data.pages){
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      queryUseCouponListBySeller({
+        pageNum: this.data.page,
+        pageSize: 10
+      }).then((res)=>{
+        if(res.code == 200){
+          this.setData({
+            sellerList2: this.data.sellerList2.concat(res.data.records),
+            pages: res.data.pages
+          })
         }
       })
     }
@@ -243,34 +293,39 @@ Page({
     })
   },
   clickNav(e){
+    let index = e.currentTarget.dataset.index;
     this.setData({
-      nav_active: e.currentTarget.dataset.index,
-      page: 1
+      nav_active: index,
+      page: 1,
+      look_list: [],
+      coupon_list: [],
+      collect_list: []
     })
-    
-    if(res.data.type == null){
-      if(this.data.nav_active == 0){
+    if(this.data.identity == null){
+      if(index == 0){
         this.getLookList();
-      }else if(this.data.nav_active == 1){
+      }else if(index == 1){
         this.getCollectList();
       }else{
         this.getBuyList();
       }
     }
-    if(res.data.type == 'seller'){
-      if(this.data.nav_active == 0){
+    if(this.data.identity == 'seller'){
+      if(index == 0){
         this.getBuyList();//已出售促销券
+      }else{
+        this.getConsumeList();//已验收促销券
       }
     }
-    if(res.data.type == 'agent'){
-      if(this.data.nav_active == 0){
+    if(this.data.identity == 'agent'){
+      if(index == 0){
         this.getLookList();
       }else{
         this.getCollectList();
       }
     }
-    if(res.data.type == 'boss'){
-      if(this.data.nav_active == 0){
+    if(this.data.identity == 'boss'){
+      if(index == 0){
         this.getLookList();
       }
     }
@@ -325,7 +380,7 @@ Page({
   selectCollect(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?src='+this.data.collect_list[index].coupon,
+      url: '/pages/couponDetail/index?type=buy&src='+this.data.collect_list[index].coupon,
     })
   },
   selectCoupon(e){

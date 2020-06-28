@@ -11,12 +11,14 @@ import {
   queryCouponSellList,
   queryAllCouponSellList,
   queryCouponUseList,
+  queryCouponUseList2,
   querySellCouponList,
   couponConsume,
   couponSell,
   queryBusinessInfo
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
+import publicFun from '../../utils/public.js'
 Page({
 
   /**
@@ -42,7 +44,8 @@ Page({
     is_issue: 0,
     back_img: '../../assets/back.jpg',
     dataStr: '',
-    consumerId: ''
+    consumerId: '',
+    is_click: false,  //是否点击我的商家按钮
   },
 
   /**
@@ -50,12 +53,22 @@ Page({
    */
   onLoad: function (options) {
     // this.userInfo();
-
+    var that = this;
     //查看促销券出售数量(老板)
     // queryAllCouponSellList({
     //   pageNum: 1,
     //   pageSize: 5
     // }).then(res=>{})
+
+    let promotion_list = [
+      {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+      {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+      {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+    ]
+    that.setData({
+      promotion_list: promotion_list,
+      is_click: false
+    })
   },
 
   /**
@@ -73,93 +86,117 @@ Page({
     //   is_home: true,
     //   is_issue: 0
     // })
-
+    var that = this;
     queryBusinessInfo().then((res)=>{
       if(res.code == 200){
+        console.log(JSON.stringify(res.data.status))
         if(res.data.status == '待审批'){
-          this.setData({
+          that.setData({
             is_pass: 1
+          })
+        }else{
+          this.setData({
+            is_pass: 0
           })
         }
       }
     })
 
-    getInfo().then(res=>{
-      if(res.code == 401){
-        let promotion = [{icon: '/assets/nav_icon9.png',title: '我当销售员'},
-          {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-          {icon: '/assets/nav_icon6.png',title: '我发促销券'}
-        ];
-        this.setData({
-          promotion_list:  promotion
+    wx.checkSession({
+      success () {
+        console.log('登录未过期');
+        wx.setStorage({
+          data: 1,
+          key: 'check',
         })
+        //session_key 未过期，并且在本生命周期一直有效
+    
+        getInfo().then(res=>{
+          if(res.code == 200){
+            // var promotion_list = [];
+            // var id_title = '';
+            // if(res.data.type == null){
+            //   id_title = '消费者';
+            // }
+            // promotion_list = [
+            //   {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+            //   {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+            //   {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+            // ]
+            that.setData({
+              // promotion_list: promotion_list,
+              // id_title: id_title,
+              avatar: res.data.headPortraitLink,
+              name: res.data.nickname,
+              // phone: res.data.phone,
+              identity: res.data.type
+            })
+            // let identity = this.data.identity;
+            // let identity = res.data.type;
+            // if(identity == 'boss'){
+            //   // 老板
+            //   id_title = '老板';
+            //   promotion_list = [
+            //     {icon: '/assets/nav_icon2.png',title: '促销券编辑'},
+            //     {icon: '/assets/nav_icon9.png',title: '我的销售员'},
+            //     {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
+            //     {icon: '/assets/nav_icon6.png',title: '促销券发行'},
+            //     {icon: '/assets/nav_icon8.png',title: '我的代理人'},
+            //     {icon: '/assets/nav_icon7.png',title: '促销券收益'}
+            //   ]
+            // }else if(identity == 'agent'){
+            //   // 代理人
+            //   id_title = '代理人';
+            //   promotion_list = [
+            //     {icon: '/assets/nav_icon1.png',title: '促销券收藏'},
+            //     {icon: '/assets/nav_icon6.png',title: '促销券再发行'},
+            //     {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
+            //     {icon: '/assets/nav_icon7.png',title: '促销券收益'}
+            //   ]
+            // }else if(identity == 'seller'){
+            //   // 销售员
+            //   id_title = '销售员';
+            //   promotion_list = [
+            //     {icon: '/assets/nav_icon4.png',title: '促销券销售'},
+            //     {icon: '/assets/nav_icon5.png',title: '促销券验证'},
+            //     {icon: '/assets/nav_icon3.png',title: '促销券收入'},
+            //     {icon: '/assets/nav_icon7.png',title: '促销券折让'}
+            //   ]
+            // }else{
+            //   id_title = '消费者';
+            //   promotion_list = [
+            //     {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+            //     {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+            //     {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+            //     // {icon: '/assets/nav_icon6.png',title: '我做编辑人'}
+            //   ]
+            // }
+          }
+        }).catch(err=>{
+          let promotion = [{icon: '/assets/nav_icon9.png',title: '我当销售员'},
+              {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+              {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+            ];
+            that.setData({
+              promotion_list:  promotion,
+              is_click: false
+            })
+        })
+        // .finally(sfs=>{
+        //   wx.reLaunch({
+        //     url: "/pages/login/index"
+        //   })
+        // })
+      },
+      fail () {
+        console.log('登录已过期');
+        wx.setStorage({
+          data: 2,
+          key: 'check',
+        })
+        // session_key 已经失效，需要重新执行登录流程
       }
-      if(res.code == 200){
-        let promotion_list = [];
-        let id_title = '';
-        // let identity = this.data.identity;
-        let identity = res.data.type;
-        if(identity == 'boss'){
-          // 老板
-          id_title = '老板';
-          promotion_list = [
-            {icon: '/assets/nav_icon2.png',title: '促销券编辑'},
-            {icon: '/assets/nav_icon9.png',title: '我的销售员'},
-            {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
-            {icon: '/assets/nav_icon6.png',title: '促销券发行'},
-            {icon: '/assets/nav_icon8.png',title: '我的代理人'},
-            {icon: '/assets/nav_icon7.png',title: '促销券收益'}
-          ]
-        }else if(identity == 'agent'){
-          // 代理人
-          id_title = '代理人';
-          promotion_list = [
-            {icon: '/assets/nav_icon1.png',title: '促销券收藏'},
-            {icon: '/assets/nav_icon6.png',title: '促销券再发行'},
-            {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
-            {icon: '/assets/nav_icon7.png',title: '促销券收益'}
-          ]
-        }else if(identity == 'seller'){
-          // 销售员
-          id_title = '销售员';
-          promotion_list = [
-            {icon: '/assets/nav_icon4.png',title: '促销券销售'},
-            {icon: '/assets/nav_icon5.png',title: '促销券验证'},
-            {icon: '/assets/nav_icon3.png',title: '促销券收入'},
-            {icon: '/assets/nav_icon7.png',title: '促销券折让'}
-          ]
-        }else{
-          id_title = '消费者';
-          promotion_list = [
-            {icon: '/assets/nav_icon9.png',title: '我当销售员'},
-            {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-            {icon: '/assets/nav_icon6.png',title: '我发促销券'}
-            // {icon: '/assets/nav_icon6.png',title: '我做编辑人'}
-          ]
-        }
-        this.setData({
-          promotion_list: promotion_list,
-          id_title: id_title,
-          avatar: res.data.headPortraitLink,
-          name: res.data.nickname,
-          phone: res.data.phone,
-          identity: res.data.type
-        })
-      }
-    }).catch(err=>{
-      let promotion = [{icon: '/assets/nav_icon9.png',title: '我当销售员'},
-          {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-          {icon: '/assets/nav_icon6.png',title: '我发促销券'}
-        ];
-        this.setData({
-          promotion_list:  promotion
-        })
     })
-    // .finally(sfs=>{
-    //   wx.reLaunch({
-    //     url: "/pages/login/index"
-    //   })
-    // })
   },
   getUserLogin(){
     this.onShow();
@@ -355,247 +392,237 @@ Page({
     this.setData({
       index: e.detail.index
     })
-    if(this.data.identity ==  'boss'){
-      if(e.detail.index == 0){
-        this.setData({
-          page: 1,
-          is_list: 0,
-          is_home: false,
-          coupon_list: []
-        })
-        console.log(this.data.is_list)
-        this.getCouponList();
-      }
-      if(e.detail.index == 1){
-        wx.navigateTo({
-          url: '/pages/mySeller/index',
-        })
-      }
-      if(e.detail.index == 2){
-        // 促销券回顾
-        this.setData({
-          page: 1,
-          is_list: 1,
-          is_home: false,
-          status: 0,
-          issued_list: []
-        })
-        console.log(this.data.is_list)
-        this.getIssuedList(0);
-      }
-      if(e.detail.index == 3){
-        this.setData({
-          page: 1,
-          is_list: 1,
-          status: 1,
-          is_home: false,
-          is_issue: 1,
-          issued_list: []
-        })
-        this.getIssuedList(1);
-      }
-      if(e.detail.index == 4){
-        wx.navigateTo({
-          url: '/pages/myAgent/index',
-        })
-      }
-      if(e.detail.index == 5){
-        //促销券收益（查看促销券出售数量）--老板
-        queryAllCouponSellList({
-          pageNum: this.data.page,
-          pageSize: 5
-        }).then(res=>{
+    if(this.data.is_click == true){
+      if(this.data.identity ==  'boss'){
+        if(e.detail.index == 0){
+          this.setData({
+            page: 1,
+            is_list: 0,
+            is_home: false,
+            coupon_list: []
+          })
+          console.log(this.data.is_list)
+          this.getCouponList();
+        }
+        if(e.detail.index == 1){
+          wx.navigateTo({
+            url: '/pages/mySeller/index',
+          })
+        }
+        if(e.detail.index == 2){
+          // 促销券回顾
+          this.setData({
+            page: 1,
+            is_list: 1,
+            is_home: false,
+            status: 0,
+            issued_list: []
+          })
+          console.log(this.data.is_list)
+          this.getIssuedList(0);
+        }
+        if(e.detail.index == 3){
+          this.setData({
+            page: 1,
+            is_list: 1,
+            status: 1,
+            is_home: false,
+            is_issue: 1,
+            issued_list: []
+          })
+          this.getIssuedList(1);
+        }
+        if(e.detail.index == 4){
+          wx.navigateTo({
+            url: '/pages/myAgent/index',
+          })
+        }
+        if(e.detail.index == 5){
+          //促销券收益（查看促销券出售数量）--老板
+          queryAllCouponSellList({
+            pageNum: this.data.page,
+            pageSize: 5
+          }).then(res=>{
 
-        })
-      }
-    }else if(this.data.identity == 'agent'){
-      if(e.detail.index == 0){
-        this.setData({
-          page: 1,
-          is_list: 0,
-          is_home: false,
-          coupon_list: []
-        })
-        this.getCouponList1();
-      }
-      if(e.detail.index == 1){
-        this.setData({
-          page: 1,
-          is_list: 1,
-          is_home: false,
-          status: 1,
-          issued_list: []
-        })
-        this.getIssuedList1(1);
-      }
-      if(e.detail.index == 2){
-        // 促销券回顾
-        this.setData({
-          page: 1,
-          is_list: 1,
-          is_home: false,
-          status: 0,
-          issued_list: []
-        })
-        this.getIssuedList1(0);
-      }
-      if(e.detail.index == 3){
-        //查看促销券出售数量(代理人)
-        queryCouponSellList({
-          pageNum: this.data.page,
-          pageSize: 5
-        }).then((res)=>{
-          
-        })
-      }
-    }else if(this.data.identity == 'seller'){
-      // 销售员
-      if(e.detail.index == 0){
-        // 销售
-        var that = this;
-        wx.scanCode({
-          onlyFromCamera: true,
-          success(res) {
-            console.log(111111111);
-            // console.log('扫码返回的参数: '+res.result.length);
-            console.log(res.result.length)
-            if(res.result.length == 28){
-              that.setData({
-                consumerId: res.result
-              })
-              console.log(that.data.consumerId,that.data.dataStr);
-            }else{
+          })
+        }
+      }else if(this.data.identity == 'agent'){
+        if(e.detail.index == 0){
+          this.setData({
+            page: 1,
+            is_list: 0,
+            is_home: false,
+            coupon_list: []
+          })
+          this.getCouponList1();
+        }
+        if(e.detail.index == 1){
+          this.setData({
+            page: 1,
+            is_list: 1,
+            is_home: false,
+            status: 1,
+            issued_list: []
+          })
+          this.getIssuedList1(1);
+        }
+        if(e.detail.index == 2){
+          // 促销券回顾
+          this.setData({
+            page: 1,
+            is_list: 1,
+            is_home: false,
+            status: 0,
+            issued_list: []
+          })
+          this.getIssuedList1(0);
+        }
+        if(e.detail.index == 3){
+          //查看促销券出售数量(代理人)
+          queryCouponSellList({
+            pageNum: this.data.page,
+            pageSize: 5
+          }).then((res)=>{
+            
+          })
+        }
+      }else if(this.data.identity == 'seller'){
+        // 销售员
+        if(e.detail.index == 0){
+          // 销售
+          var that = this;
+          wx.scanCode({
+            onlyFromCamera: true,
+            success(res) {
+              // console.log('扫码返回的参数: '+res.result.length);
+              console.log(res.result.length)
+              if(res.result.length == 28){
+                that.setData({
+                  consumerId: res.result
+                })
+              }else{
+                let data = wx.getQueryString({
+                  url: res.result,
+                  name: "data"
+                });
+                that.setData({
+                  dataStr: data
+                })
+              }
+              if(that.data.dataStr != '' && that.data.consumerId != ''){
+                console.log('请求的参数：'+that.data.consumerId,that.data.dataStr);
+                couponSell({
+                  consumerId: that.data.consumerId,//消费者ID
+                  data: that.data.dataStr//要购买的促销劵二维码
+                }).then(resg=>{
+                  if(resg.code == 200){
+                    // console.log(JSON.stringify(resg));
+                    publicFun.getToast(resg.data,'success')
+                  }
+                })
+              }
+              // console.log('扫码返回的参数2'+data);
+            }
+          })
+        }
+        if(e.detail.index == 1){
+          // 验证
+          wx.scanCode({
+            onlyFromCamera: true,
+            success (res) {
+              // console.log('扫码返回的参数1'+JSON.stringify(res.result));
               let data = wx.getQueryString({
                 url: res.result,
                 name: "data"
               });
-              that.setData({
-                dataStr: data
-              })
-              console.log(that.data.consumerId,that.data.dataStr);
-            }
-            if(that.data.dataStr != '' && that.data.consumerId != ''){
-              couponSell({
-                consumerId: that.data.consumerId,//消费者ID
-                data: that.data.dataStr//要购买的促销劵二维码
-              }).then(resg=>{
+              // console.log('扫码返回的参数2'+JSON.stringify(data));
+              couponConsume({
+                param: data
+              }).then((resg)=>{
                 if(resg.code == 200){
-    
+                  publicFun.getToast(resg.data,'success')
                 }
               })
             }
-            // console.log('扫码返回的参数2'+data);
-          }
-        })
-      }
-      if(e.detail.index == 1){
-        // 验证
-        wx.scanCode({
-          onlyFromCamera: true,
-          success (res) {
-            console.log('扫码返回的参数1'+JSON.stringify(res.result));
-            let data = wx.getQueryString({
-              url: res.result,
-              name: "data"
-            });
-            couponConsume({
-              data: data //二维码信息
-            }).then((resg)=>{
-              if(resg.code == 200){
-    
-              }
-            })
-          }
-        })
-      }
-      if(e.detail.index == 2){
-        // 收入列表
-        querySellCouponList({
-          pageNum: this.data.page,
-          pageSize: 5
-        }).then((res)=>{
-          
-        })
-      }
-      if(e.detail.index == 3){
-        // 折让列表
-        queryCouponUseList({
-          pageNum: this.data.page,
-          pageSize: 5
-        }).then((res)=>{
-          
-        })
+          })
+        }
+        if(e.detail.index == 2){
+          // 收入列表
+          querySellCouponList({
+            pageNum: this.data.page,
+            pageSize: 5
+          }).then((res)=>{
+            
+          })
+        }
+        if(e.detail.index == 3){
+          // 折让列表
+          queryCouponUseList2({
+            pageNum: this.data.page,
+            pageSize: 5
+          }).then((res)=>{
+            
+          })
+        }
       }
     }else{
       // 消费者
       if(e.detail.index == 0){
-        wx.checkSession({
-          success () {
-            //session_key 未过期，并且在本生命周期一直有效
-            // 申请成为销售员
-            appRole({
-              type: 'seller'
-            }).then((res)=>{
-              if(res.code == 200){
-                wx.showToast({
-                  title: '请求成功',
-                  icon: 'none'
-                })
-              }
-            })
-          },
-          fail () {
-            // session_key 已经失效，需要重新执行登录流程
-            wx.showToast({
-              title: '请先登录',
-              icon: 'none'
-            })
-          }
-        })
+        if(wx.getStorageSync('check') == 1){
+          // 申请成为销售员
+          appRole({
+            type: 'seller'
+          }).then((res)=>{
+            if(res.code == 200){
+              wx.showToast({
+                title: '请求成功',
+                icon: 'none'
+              })
+            }
+          })
+        }else{
+          // session_key 已经失效，需要重新执行登录流程
+          wx.showToast({
+            title: '请先登录',
+            icon: 'none'
+          })
+        }
       }
       if(e.detail.index == 1){
-        wx.checkSession({
-          success () {
-            //session_key 未过期，并且在本生命周期一直有效
-            // 申请成为代理人
-            appRole({
-              type: 'agent'
-            }).then((res)=>{
-              if(res.code == 200){
-                wx.showToast({
-                  title: '请求成功',
-                  icon: 'none'
-                })
-              }
-            })
-          },
-          fail () {
-            // session_key 已经失效，需要重新执行登录流程
-            wx.showToast({
-              title: '请先登录',
-              icon: 'none'
-            })
-          }
-        })
+        if(wx.getStorageSync('check') == 1){
+          // 申请成为代理人
+          appRole({
+            type: 'agent'
+          }).then((res)=>{
+            if(res.code == 200){
+              wx.showToast({
+                title: '请求成功',
+                icon: 'none'
+              })
+            }
+          })
+        }else{
+          // session_key 已经失效，需要重新执行登录流程
+          wx.showToast({
+            title: '请先登录',
+            icon: 'none'
+          })
+        }
       }
       if(e.detail.index == 2){
         let that = this;
-        wx.checkSession({
-          success () {
-            //session_key 未过期，并且在本生命周期一直有效
-            // 我发促销券
-            wx.navigateTo({
-              url: '/pages/merchant/index?pass='+that.data.is_pass
-            })
-          },
-          fail () {
-            // session_key 已经失效，需要重新执行登录流程
-            wx.showToast({
-              title: '请先登录',
-              icon: 'none'
-            })
-          }
-        })
+        if(wx.getStorageSync('check') == 1){
+          // 我发促销券
+          wx.navigateTo({
+            url: '/pages/merchant/index?pass='+that.data.is_pass
+          })
+        }else{
+          // session_key 已经失效，需要重新执行登录流程
+          wx.showToast({
+            title: '请先登录',
+            icon: 'none'
+          })
+        }
       }
       if(e.detail.index == 3){
         // 我做编辑人
@@ -685,7 +712,7 @@ Page({
           })
         })
       }
-      if(this.data.index == 3){
+      if(this.data.index == 1){
         wx.navigateTo({
           url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src,
         })
@@ -694,9 +721,16 @@ Page({
   },
   toUser(){
     if(this.data.is_home == true){
-      wx.navigateTo({
-        url: '/pages/userInfo/index',
-      })
+      if(wx.getStorageSync('check') == 1){
+        wx.navigateTo({
+          url: '/pages/userInfo/index',
+        })
+      }else{
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        })
+      }
     }else{
       this.setData({
         is_home: true,
@@ -707,6 +741,55 @@ Page({
   toIssue(){
     wx.navigateTo({
       url: '/pages/editIssue/index'
+    })
+  },
+  toMyHouse(){
+    var promotion_list = [];
+    var id_title = '';
+    var identity = this.data.identity;
+    var is_click = !this.data.is_click;
+    if(is_click){
+      if(identity == 'boss'){
+        // 老板
+        id_title = '老板';
+        promotion_list = [
+          {icon: '/assets/nav_icon2.png',title: '促销券编辑'},
+          {icon: '/assets/nav_icon9.png',title: '我的销售员'},
+          {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
+          {icon: '/assets/nav_icon6.png',title: '促销券发行'},
+          {icon: '/assets/nav_icon8.png',title: '我的代理人'},
+          {icon: '/assets/nav_icon7.png',title: '促销券收益'}
+        ]
+      }else if(identity == 'agent'){
+        // 代理人
+        id_title = '代理人';
+        promotion_list = [
+          {icon: '/assets/nav_icon1.png',title: '促销券收藏'},
+          {icon: '/assets/nav_icon6.png',title: '促销券再发行'},
+          {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
+          {icon: '/assets/nav_icon7.png',title: '促销券收益'}
+        ]
+      }else if(identity == 'seller'){
+        // 销售员
+        id_title = '销售员';
+        promotion_list = [
+          {icon: '/assets/nav_icon4.png',title: '促销券销售'},
+          {icon: '/assets/nav_icon5.png',title: '促销券验证'},
+          {icon: '/assets/nav_icon3.png',title: '促销券收入'},
+          {icon: '/assets/nav_icon7.png',title: '促销券折让'}
+        ]
+      }
+    }else{
+      promotion_list = [
+        {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+        {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+        {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+      ]
+    }
+    this.setData({
+      promotion_list: promotion_list,
+      id_title: id_title,
+      is_click: is_click
     })
   }
 })

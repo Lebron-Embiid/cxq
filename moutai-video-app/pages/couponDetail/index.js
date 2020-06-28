@@ -87,7 +87,11 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
-
+  onShareAppMessage: function (res) {
+    console.log(JSON.stringify(res))
+    var that = this;
+    return {
+      imageUrl: that.data.src
+    }
   }
 })

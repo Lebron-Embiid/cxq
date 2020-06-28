@@ -140,6 +140,22 @@ export function queryCouponSellList(data) {
     data
   })
 }
+//查看促销券出售列表(已出售促销劵)
+export function querySellCouponListBySeller(data) {
+  return request({
+    url: "/applet/coupon/querySellCouponListBySeller",
+    method: "GET",
+    data
+  })
+}
+//查看促销券验收列表(已验收促销劵))
+export function queryUseCouponListBySeller(data) {
+  return request({
+    url: "/applet/coupon/queryUseCouponListBySeller",
+    method: "GET",
+    data
+  })
+}
 //添加促销劵收藏(消费者)
 export function couponCollect(data) {
   return request({
@@ -168,6 +184,14 @@ export function queryMyCouponList(data) {
 export function queryCouponUseList(data) {
   return request({
     url: "/applet/coupon/queryCouponUseList",
+    method: "GET",
+    data
+  })
+}
+//查看促销券验收列表(销售员查看))--折让列表
+export function queryCouponUseList2(data) {
+  return request({
+    url: "/applet/coupon/queryCouponUseList2",
     method: "GET",
     data
   })

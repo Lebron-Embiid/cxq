@@ -24,7 +24,7 @@
   </view>
 
   <!-- 浏览促销券 -->
-  <view class="nav_content" wx:if="{{nav_active == 0 && identity != seller}}">
+  <view class="nav_content" wx:if="{{nav_active == 0 && identity != 'seller'}}">
     <view class="browse_box">
       <scroll-view class="scroll_view_H" bindscrolltolower="getLookMore" scroll-x="true" style="width: 100%">
         <view class="scroll_item" bindtap="selectLook" data-index="{{index}}" wx:for="{{look_list}}" wx:key="index">
@@ -35,7 +35,7 @@
     </view>
   </view>
   <!-- 收藏促销券 -->
-  <view class="nav_content" wx:if="{{nav_active == 1 || identity == agent || identity == null}}">
+  <view class="nav_content" wx:if="{{(nav_active == 1 && identity == 'agent') || (nav_active == 1 && identity == null)}}">
     <view class="browse_box">
       <scroll-view class="scroll_view_H" bindscrolltolower="getCollectMore" scroll-x="true" style="width: 100%">
         <view class="scroll_item" bindtap="selectCollect" data-index="{{index}}" wx:for="{{collect_list}}" wx:key="index"><image src="{{item.coupon}}" mode="widthFix"></image></view>
@@ -43,13 +43,27 @@
     </view>
   </view>
   <!-- 已购促销券 -->
-  <view class="nav_content" wx:if="{{nav_active == 2}}">
+  <view class="nav_content" wx:if="{{nav_active == 2 && identity == null}}">
     <view class="browse_box">
       <scroll-view class="scroll_view_H" bindscrolltolower="getCouponMore" scroll-x="true" style="width: 100%">
         <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_list}}" wx:key="index"><image src="{{item.coupon}}" mode="widthFix"></image></view>
       </scroll-view>
     </view>
   </view>
+  <!-- 已出售促销券 -->
+  <scroll-view bindscrolltolower="getSellerListMore1" scroll-y="true" style="height: 600rpx;" class="nav_content" wx:if="{{identity == 'seller' && nav_active == 0}}">
+    <view class="seller_coupon_item" wx:for="{{sellerList1}}" wx:key="index">
+      <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.date}}</text></view>
+      <view class="seller_bottom"><text>{{item.nickname}}</text><text>促销编号：{{item.number}}</text></view>
+    </view>
+  </scroll-view>
+  <!-- 已验收促销券 -->
+  <scroll-view bindscrolltolower="getSellerListMore2" scroll-y="true" style="height: 600rpx;" class="nav_content" wx:if="{{identity == 'seller' && nav_active == 1}}">
+    <view class="seller_coupon_item" wx:for="{{sellerList2}}" wx:key="index">
+      <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.date}}</text></view>
+      <view class="seller_bottom"><text></text><text>促销面值：{{item.value}}</text></view>
+    </view>
+  </scroll-view>
   <!-- 我想 -->
   <view class="nav_content" wx:if="{{nav_active == 3 && identity == null}}">
     <view class="promotion_list_box">

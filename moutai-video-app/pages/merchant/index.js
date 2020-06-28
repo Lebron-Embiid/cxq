@@ -34,11 +34,6 @@ Page({
     this.setData({
       is_pass: options.pass
     })
-    if(options.pass == 1){
-      wx.reLaunch({
-        url: '/pages/login/index',
-      })
-    }
   },
 
   /**
@@ -126,9 +121,15 @@ Page({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
         name: 'file',
+        header: {
+          'Authentication': wx.getStorageSync('token')
+        },
         success (imgRes){
+          console.log(JSON.stringify(imgRes.data))
+          console.log(JSON.parse(imgRes.data).data)
+          let img_pic = JSON.parse(imgRes.data).data;
           that.setData({
-            license: imgRes.data,
+            license: img_pic,
             is_license: 1
           })
         }
@@ -142,9 +143,13 @@ Page({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
         name: 'file',
+        header: {
+          'Authentication': wx.getStorageSync('token')
+        },
         success (imgRes){
+          let img_pic = JSON.parse(imgRes.data).data;
           that.setData({
-            back_img: imgRes.data,
+            back_img: img_pic,
             is_back: 1
           })
         }
@@ -158,9 +163,13 @@ Page({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
         name: 'file',
+        header: {
+          'Authentication': wx.getStorageSync('token')
+        },
         success (imgRes){
+          let img_pic = JSON.parse(imgRes.data).data;
           that.setData({
-            card_img: imgRes.data,
+            card_img: img_pic,
             is_card: 1
           })
         }
@@ -174,9 +183,13 @@ Page({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
         name: 'file',
+        header: {
+          'Authentication': wx.getStorageSync('token')
+        },
         success (imgRes){
+          let img_pic = JSON.parse(imgRes.data).data;
           that.setData({
-            book_img: imgRes.data,
+            book_img: img_pic,
             is_book: 1
           })
         }

@@ -87,7 +87,8 @@ Page({
           avatar: res.data.headPortraitLink,
           name: res.data.nickname,
           phone: res.data.phone,
-          identity: res.data.type
+          identity: res.data.type,
+          look_list: []
         })
 
         if(this.data.identity != 'seller'){
@@ -140,7 +141,7 @@ Page({
           let base64 = "data:image/png;base64," + item.rqcode;
           base64src(base64,item.couponId,ress=>{
             this.data.look_list.push({
-              id: item.certId,
+              certId: item.certId,
               couponId: item.couponId,
               coupon: ress
             });
@@ -165,6 +166,7 @@ Page({
           let base64 = "data:image/png;base64," + item.rqcode;
           base64src(base64,item.couponId,ress=>{
             this.data.collect_list.push({
+              certId: item.certId,
               id: item.couponId,
               coupon: ress
             });
@@ -188,8 +190,9 @@ Page({
           for(let i in buyres.data.records){
             let item = buyres.data.records[i];
             let base64 = "data:image/png;base64," + item.rqcode;
-            base64src(base64,item.couponId,ress=>{
+            base64src(base64,item.certId,ress=>{
               this.data.coupon_list.push({
+                certId: item.certId,
                 id: item.couponId,
                 coupon: ress
               });
@@ -360,7 +363,7 @@ Page({
   selectLook(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?type=buy&src='+this.data.look_list[index].coupon,
+      url: '/pages/couponDetail/index?type=buy&src='+this.data.look_list[index].coupon+'&certId='+this.data.look_list[index].certId
     })
   },
   toCollect(e){
@@ -380,13 +383,13 @@ Page({
   selectCollect(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?type=buy&src='+this.data.collect_list[index].coupon,
+      url: '/pages/couponDetail/index?type=buy&src='+this.data.collect_list[index].coupon+'&certId='+this.data.collect_list[index].certId
     })
   },
   selectCoupon(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?src='+this.data.coupon_list[index].coupon,
+      url: '/pages/couponDetail/index?buy=ok&src='+this.data.coupon_list[index].coupon+'&certId='+this.data.coupon_list[index].certId
     })
   },
   clickItem(e){

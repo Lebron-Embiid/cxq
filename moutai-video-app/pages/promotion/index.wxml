@@ -2,12 +2,16 @@
 <view>
   <view class="promotion_box">
     <image class="back_img" src="{{back_img}}" mode="aspectFill"></image>
+    <!-- <van-button catch:click="updateToken" class="clear_btn" color="#37444A" type="primary" size="small">更新数据</van-button> -->
     <view class="person_box">
       <view class="person_info_box">
         <user-btn bind:mylogin="getUserLogin">
           <view class="person_avatar"><image src="{{avatar}}" mode="widthFix"></image></view>
           <view class="person_name">{{id_title}} {{name?name:'点击登录账户'}}</view>
         </user-btn>
+        <user-phone bind:myphone="getUserPhone" wx:if="{{phone==null}}">
+          <van-button class="phone_btn" color="#37444A" type="primary" size="small">获取手机号</van-button>
+        </user-phone>
         <van-button wx:if="{{identity != null}}" bind:click="toMyHouse" color="#37444A" class="left_btn" type="primary" size="small">
           {{!is_click?'我的商家':'我的主页'}}
         </van-button>
@@ -16,7 +20,7 @@
         </van-button>
         <!-- <button wx:if="{{identity == 'boss' && is_issue == 1}}" type="primary" bindtap="toIssue" class="issue_btn" size="mini">从编辑发行</button> -->
       </view>
-
+      
       <view wx:if="{{is_home}}">
         <promotion-list list="{{promotion_list}}" bind:myevent="getListClick"></promotion-list>
       </view>
@@ -24,6 +28,7 @@
         <!-- 促销券编辑 -->
         <block wx:if="{{is_list == 0}}">
           <view class="browse_box">
+            <van-button bindtap="selectUserCoupon" color="#37444A" type="primary" size="small" class="customize_add" wx:if="{{identity == 'boss'}}">自定义促销券</van-button>
             <scroll-view bindscrolltolower="getCouponMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
               <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_list}}" wx:key="index"><image src="{{item.src}}" mode="widthFix"></image></view>
             </scroll-view>

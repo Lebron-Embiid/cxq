@@ -15,7 +15,11 @@ import {
   querySellCouponList,
   couponConsume,
   couponSell,
-  queryBusinessInfo
+  queryBusinessInfo,
+  queryBusinessImg,
+  getSessinKey,
+  update_phone,
+  update_user_info
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
@@ -42,7 +46,8 @@ Page({
     status: 1,
     is_pass: 0,
     is_issue: 0,
-    back_img: '../../assets/back.jpg',
+    back_img: '../../assets/indexBackground.png',
+    shangjia_img: '',
     dataStr: '',
     consumerId: '',
     is_click: false,  //是否点击我的商家按钮
@@ -75,9 +80,12 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-
+    queryBusinessImg().then((res)=>{
+      this.setData({
+        shangjia_img: res.data
+      })
+    })
   },
-
   /**
    * 生命周期函数--监听页面显示
    */
@@ -128,7 +136,7 @@ Page({
               // id_title: id_title,
               avatar: res.data.headPortraitLink,
               name: res.data.nickname,
-              // phone: res.data.phone,
+              phone: res.data.phone,
               identity: res.data.type
             })
             // let identity = this.data.identity;
@@ -319,7 +327,8 @@ Page({
         base64src(base64,item.couponId,ress=>{
           this.data.issued_list.push({
             id: item.couponId,
-            src: ress
+            src: ress,
+            certId: item.certId
           });
           this.setData({
             issued_list: this.data.issued_list,
@@ -345,7 +354,8 @@ Page({
         base64src(base64,item.couponId,ress=>{
           this.data.issued_list.push({
             id: item.couponId,
-            src: ress
+            src: ress,
+            certId: item.certId
           });
           this.setData({
             issued_list: this.data.issued_list,
@@ -406,20 +416,23 @@ Page({
         }
         if(e.detail.index == 1){
           wx.navigateTo({
-            url: '/pages/mySeller/index',
+            url: '/pages/mySeller/index'
           })
         }
         if(e.detail.index == 2){
           // 促销券回顾
-          this.setData({
-            page: 1,
-            is_list: 1,
-            is_home: false,
-            status: 0,
-            issued_list: []
+          wx.navigateTo({
+            url: '/pages/profitList/index?type=boss',
           })
-          console.log(this.data.is_list)
-          this.getIssuedList(0);
+          // this.setData({
+          //   page: 1,
+          //   is_list: 1,
+          //   is_home: false,
+          //   status: 0,
+          //   issued_list: []
+          // })
+          // console.log(this.data.is_list)
+          // this.getIssuedList(0);
         }
         if(e.detail.index == 3){
           this.setData({
@@ -434,20 +447,24 @@ Page({
         }
         if(e.detail.index == 4){
           wx.navigateTo({
-            url: '/pages/myAgent/index',
+            url: '/pages/myAgent/index'
           })
         }
         if(e.detail.index == 5){
           //促销券收益（查看促销券出售数量）--老板
-          queryAllCouponSellList({
-            pageNum: this.data.page,
-            pageSize: 5
-          }).then(res=>{
-
+          wx.navigateTo({
+            url: '/pages/profitList/index?type=boss'
           })
+          // queryAllCouponSellList({
+          //   pageNum: this.data.page,
+          //   pageSize: 5
+          // }).then(res=>{
+
+          // })
         }
       }else if(this.data.identity == 'agent'){
         if(e.detail.index == 0){
+          // 促销券收藏
           this.setData({
             page: 1,
             is_list: 0,
@@ -457,6 +474,7 @@ Page({
           this.getCouponList1();
         }
         if(e.detail.index == 1){
+          // 促销券再发行
           this.setData({
             page: 1,
             is_list: 1,
@@ -468,23 +486,30 @@ Page({
         }
         if(e.detail.index == 2){
           // 促销券回顾
-          this.setData({
-            page: 1,
-            is_list: 1,
-            is_home: false,
-            status: 0,
-            issued_list: []
+          wx.navigateTo({
+            url: '/pages/profitDetail/index?type=agent'
           })
-          this.getIssuedList1(0);
+          // this.setData({
+          //   page: 1,
+          //   is_list: 1,
+          //   is_home: false,
+          //   status: 0,
+          //   issued_list: []
+          // })
+          // this.getIssuedList1(0);
         }
         if(e.detail.index == 3){
-          //查看促销券出售数量(代理人)
-          queryCouponSellList({
-            pageNum: this.data.page,
-            pageSize: 5
-          }).then((res)=>{
-            
+          // 促销券收益
+          wx.navigateTo({
+            url: '/pages/profitDetail/index?type=agent'
           })
+          //查看促销券出售数量(代理人)
+          // queryCouponSellList({
+          //   pageNum: this.data.page,
+          //   pageSize: 5
+          // }).then((res)=>{
+            
+          // })
         }
       }else if(this.data.identity == 'seller'){
         // 销售员
@@ -547,26 +572,40 @@ Page({
           })
         }
         if(e.detail.index == 2){
-          // 收入列表
-          querySellCouponList({
-            pageNum: this.data.page,
-            pageSize: 5
-          }).then((res)=>{
-            
+          // 收入详情
+          wx.navigateTo({
+            url: '/pages/profitDetail/index?type=seller&index=0',
           })
+          // querySellCouponList({
+          //   pageNum: this.data.page,
+          //   pageSize: 5
+          // }).then((res)=>{
+            
+          // })
         }
         if(e.detail.index == 3){
-          // 折让列表
-          queryCouponUseList2({
-            pageNum: this.data.page,
-            pageSize: 5
-          }).then((res)=>{
-            
+          // 折让详情
+          wx.navigateTo({
+            url: '/pages/profitDetail/index?type=seller&index=1',
           })
+          // queryCouponUseList2({
+          //   pageNum: this.data.page,
+          //   pageSize: 5
+          // }).then((res)=>{
+            
+          // })
         }
       }
     }else{
       // 消费者
+      if(this.data.phone == null){
+        wx.showToast({
+          title: '此功能需获取您的手机号',
+          icon: 'none'
+        })
+        return;
+      }
+
       if(e.detail.index == 0){
         if(wx.getStorageSync('check') == 1){
           // 申请成为销售员
@@ -629,6 +668,56 @@ Page({
       }
     }
   },
+  updateToken(){
+    var that = this;
+    update_user_info().then((res)=>{
+      wx.removeStorageSync('token');
+      wx.setStorage({
+        key: "token",
+        data: res.data.token,
+        success: ()=>{
+          var id_title = '';
+          var back_img = '../../assets/indexBackground.png';
+          var promotion_list = [
+            {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+            {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+            {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+          ]
+          that.setData({
+            is_home: true,
+            is_click: false,
+            id_title: '',
+            back_img: back_img,
+            promotion_list: promotion_list
+          })
+          that.onShow();
+        }
+      })
+    })
+  },
+  getUserPhone(e){
+    var that = this;
+    wx.login({
+      success: (resg) => {
+        getSessinKey(resg.code).then(skres => {
+          update_phone({
+            encryptedData: e.detail.encryptedData,
+            iv: e.detail.iv,
+            sessionKey: skres.data.sessionKey
+          }).then((upres)=>{
+            wx.removeStorageSync('token');
+            wx.setStorage({
+              key: "token",
+              data: upres.data.token,
+              success: ()=>{
+                that.onShow();
+              }
+            })
+          })
+        })
+      }
+    })
+  },
   scanCode() {
     wx.scanCode({
       success(res) {
@@ -688,33 +777,29 @@ Page({
       }
       if(this.data.index == 3){
         wx.navigateTo({
-          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src,
+          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src+'&certId='+this.data.issued_list[index].certId
         })
       }
     }else if(this.data.identity == 'agent'){
       if(this.data.index == 0){
         // 促销券编辑
-        editCoupon({
-          image: this.data.coupon_list[index].id
-        }).then(res=>{
-          addCouponAgent({
-            couponId: res.data.couponId
-          }).then(ress=>{
-            wx.showToast({
-              title: ress.msg,
-              duration: 1500
-            })
-            // setTimeout(()=>{
-            //   this.setData({
-            //     is_home: true
-            //   })
-            // },1500)
+        addCouponAgent({
+          couponId: this.data.coupon_list[index].id
+        }).then(ress=>{
+          wx.showToast({
+            title: ress.msg,
+            duration: 1500
           })
+          // setTimeout(()=>{
+          //   this.setData({
+          //     is_home: true
+          //   })
+          // },1500)
         })
       }
       if(this.data.index == 1){
         wx.navigateTo({
-          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src,
+          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src+'&certId='+this.data.issued_list[index].certId
         })
       }
     }
@@ -748,7 +833,9 @@ Page({
     var id_title = '';
     var identity = this.data.identity;
     var is_click = !this.data.is_click;
+    var back_img = '';
     if(is_click){
+      back_img = this.data.shangjia_img;
       if(identity == 'boss'){
         // 老板
         id_title = '老板';
@@ -780,6 +867,7 @@ Page({
         ]
       }
     }else{
+      back_img = '../../assets/indexBackground.png';
       promotion_list = [
         {icon: '/assets/nav_icon9.png',title: '我当销售员'},
         {icon: '/assets/nav_icon8.png',title: '我做代理人'},
@@ -789,7 +877,27 @@ Page({
     this.setData({
       promotion_list: promotion_list,
       id_title: id_title,
-      is_click: is_click
+      is_click: is_click,
+      back_img: back_img,
+      is_home: true
+    })
+  },
+  selectUserCoupon(){
+    publicFun.getImage(1,false,'album').then((res)=>{
+      wx.uploadFile({
+        url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
+        filePath: res[0],
+        name: 'file',
+        header: {
+          'Authentication': wx.getStorageSync('token')
+        },
+        success (imgRes){
+          console.log(JSON.parse(imgRes.data).data);
+          wx.navigateTo({
+            url: '/pages/editCoupon/index?id='+JSON.parse(imgRes.data).data,
+          })
+        }
+      })
     })
   }
 })

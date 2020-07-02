@@ -31,6 +31,7 @@ Page({
         id: options.id
       })
     }
+    console.log(options.id)
   },
 
   /**
@@ -62,7 +63,7 @@ Page({
           face: res.data.value,
           video_list: res.data.codeVideoList==null?this.data.video_list:res.data.codeVideoList
         })
-        if(save!=''){
+        if(save){
           publicFun.getToast('编辑成功');
         }
         console.log(this.data.is_edit,this.data.couponId)
@@ -167,6 +168,14 @@ Page({
     //   publicFun.getToast('请输入代理人收益');
     //   return;
     // }
+    if(this.data.video_list[0].weseeLink == '' && this.data.video_list[1].weseeLink == '' && this.data.video_list[2].weseeLink == ''){
+      publicFun.getToast('请至少上传一个视频链接');
+      return;
+    }
+    if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
+      publicFun.getToast('请填写视频名称');
+      return;
+    }
     let data = {
       imageNum: this.data.id,
       price: this.data.price,
@@ -197,6 +206,14 @@ Page({
     })
   },
   submitForm(e){
+    if(this.data.video_list[0].weseeLink == '' && this.data.video_list[1].weseeLink == '' && this.data.video_list[2].weseeLink == ''){
+      publicFun.getToast('请至少上传一个视频链接');
+      return;
+    }
+    if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
+      publicFun.getToast('请填写视频名称');
+      return;
+    }
     let data = {
       imageNum: this.data.id,
       price: this.data.price,

@@ -16,6 +16,46 @@ export function getUser(data) {
     data
   })
 }
+//更新用户手机号
+export function update_phone(data) {
+  return request({
+    url: "/applet/update_phone",
+    method: "POST",
+    data
+  })
+}
+//刷新用户信息
+export function update_user_info() {
+  return request({
+    url: "/applet/update_user_info",
+    method: "POST"
+  })
+}
+//展示促销劵(原始图)
+export function show_coupon_image(data) {
+  return request({
+    url: "/applet/coupon/show_coupon_image",
+    method: "GET",
+    data
+  })
+}
+//展示[已购]促销劵(原始图)
+export function show_sell_coupon_image(data) {
+  return request({
+    url: "/applet/coupon/show_sell_coupon_image",
+    method: "GET",
+    data
+  })
+}
+
+//保存促销劵图片到(客户端)手机
+export function save_coupon_image(data) {
+  return request({
+    url: "/applet/coupon/save_coupon_image",
+    method: "GET",
+    data
+  })
+}
 //获取当前用户信息
 export function getInfo() {
   return request({
@@ -30,6 +70,46 @@ export function getSessinKey(jsCode) {
     method: "GET"
   })
 }
+//代理人[收益]详情
+export function agent_coupon_profit_info(data) {
+  return request({
+    url: "/applet/coupon/agent_coupon_profit_info",
+    method: "GET",
+    data
+  })
+}
+//代理人[收益]列表
+export function agent_coupon_profit_list(data) {
+  return request({
+    url: "/applet/coupon/agent_coupon_profit_list",
+    method: "GET",
+    data
+  })
+}
+//销售员[折让]详情
+export function seller_coupon_discount_info(data) {
+  return request({
+    url: "/applet/coupon/seller_coupon_discount_info",
+    method: "GET",
+    data
+  })
+}
+//销售员[收益]详情
+export function seller_coupon_profit_info(data) {
+  return request({
+    url: "/applet/coupon/seller_coupon_profit_info",
+    method: "GET",
+    data
+  })
+}
+//销售员[收益列表]
+export function seller_coupon_profit_list(data) {
+  return request({
+    url: "/applet/coupon/seller_coupon_profit_list",
+    method: "GET",
+    data
+  })
+}
 //申请成为代理人/销售员
 export function appRole(data) {
   return request({
@@ -42,6 +122,13 @@ export function appRole(data) {
 export function getCode() {
   return request({
     url: "/applicationMemberRoleTest",
+    method: "GET"
+  })
+}
+//商家背景图
+export function queryBusinessImg() {
+  return request({
+    url: "/applet/user/queryBusinessImg",
     method: "GET"
   })
 }

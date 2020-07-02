@@ -1,15 +1,21 @@
 // pages/couponDetail/index.js
 import {
-  showUserQRCode
+  showUserQRCode,
+  save_coupon_image,
+  show_coupon_image,
+  show_sell_coupon_image
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
+import publicFun from '../../utils/public.js'
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    cert_id: '',
     src: '',
+    save_src: '',
     user_code: '',
     is_buy: 0 //是否是购买进入
   },
@@ -19,9 +25,41 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
-      src: options.src
+      // src: options.src,
+      cert_id: options.certId
     })
-    console.log(options.type);
+    if(options.buy){
+      show_sell_coupon_image({
+        certId: options.certId
+      }).then((res)=>{
+        const base64ImgUrl = "data:image/png;base64," + res.data;
+        base64src(base64ImgUrl,options.certId,ress=>{
+          this.setData({
+            src: ress
+          })
+        })
+      })
+    }else{
+      show_coupon_image({
+        certId: options.certId
+      }).then((res)=>{
+        const base64ImgUrl = "data:image/png;base64," + res.data;
+        base64src(base64ImgUrl,options.certId,ress=>{
+          this.setData({
+            src: ress
+          })
+        })
+      })
+    }
+    
+    save_coupon_image({
+      certId: options.certId
+    }).then((res)=>{
+      this.setData({
+        save_src: res.data
+      })
+    })
+    console.log(options);
     this.getQrCode();
     if(options.type == 'buy'){
       this.setData({
@@ -93,5 +131,34 @@ Page({
     return {
       imageUrl: that.data.src
     }
+  },
+  downloadImg(){
+    var that = this;
+    console.log(that.data.save_src)
+    wx.showModal({
+      title: '提示',
+      content: '确定下载促销券图片？',
+      success: function(res) {
+        if(res.confirm){
+          wx.downloadFile({
+            url: that.data.save_src,
+            success: (ress) => {
+              if (ress.statusCode === 200) {
+                console.log(ress.tempFilePath);
+                wx.saveImageToPhotosAlbum({
+                  filePath: ress.tempFilePath,
+                  success: function () { 
+                    publicFun.getToast('下载成功');
+                  }
+                })
+              }
+            },
+            fail() {
+              publicFun.getToast('下载失败');
+            }
+          })
+        }
+      }
+    })
   }
 })

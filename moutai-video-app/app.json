@@ -7,6 +7,8 @@
     "pages/merchant/index",
     "pages/myAgent/index",
     "pages/mySeller/index",
+    "pages/profitList/index",
+    "pages/profitDetail/index",
     "pages/index/index",
     "pages/demo/index",
     "pages/couponDetail/index",

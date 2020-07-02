@@ -27,10 +27,8 @@ Component({
       wx.login({
         success: (resg) => {
           if (resg.code) {
-            console.log(resg);
             getSessinKey(resg.code).then(skres => {
               if (skres.code == 200) {
-                console.log(skres);
                 wx.getUserInfo({
                   success: (res) => {
                     console.log(res)

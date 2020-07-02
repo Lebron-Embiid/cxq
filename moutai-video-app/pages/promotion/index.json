@@ -1,6 +1,7 @@
 {
   "usingComponents": {
     "promotion-list": "/components/promotionList",
-    "user-btn": "/components/user-btn"
+    "user-btn": "/components/user-btn",
+    "user-phone": "/components/user-phone"
   }
 }

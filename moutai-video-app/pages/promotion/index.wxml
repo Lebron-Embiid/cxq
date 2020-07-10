@@ -2,7 +2,7 @@
 <view>
   <view class="promotion_box">
     <image class="back_img" src="{{back_img}}" mode="aspectFill"></image>
-    <!-- <van-button catch:click="updateToken" class="clear_btn" color="#37444A" type="primary" size="small">更新数据</van-button> -->
+    <van-button catch:click="updateToken" class="clear_btn" color="#37444A" type="primary" size="small">更新数据</van-button>
     <view class="person_box">
       <view class="person_info_box">
         <user-btn bind:mylogin="getUserLogin">

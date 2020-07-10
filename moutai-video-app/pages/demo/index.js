@@ -11,7 +11,7 @@ Page({
     index: 0
   },
   onLoad(options) {
-    // console.log('微信扫码接收'+JSON.stringify(options.q))
+    console.log('111微信扫码接收'+JSON.stringify(options.q))
     var data = '';
     if(wx.getStorageSync('params')){
       data = wx.getStorageSync('params');
@@ -24,7 +24,7 @@ Page({
         url: newUrl,
         name: "data"
       });
-      console.log('微信扫码接收的参数'+data);
+      console.log('222微信扫码接收的参数'+data);
     }
     // let data = wx.getStorageSync('params');
     // console.log('扫码接收的参数'+data);

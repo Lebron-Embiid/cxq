@@ -1,7 +1,8 @@
 // pages/merchant/index.js
 import {
   uploadFile,
-  addMerchantInfo
+  addMerchantInfo,
+  queryBusinessInfo
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
@@ -11,6 +12,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    business_id: '',
     name: '',
     license: '',
     is_license: 0,
@@ -31,9 +33,18 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.setData({
-      is_pass: options.pass
-    })
+    if(options.type){
+      wx.setNavigationBarTitle({
+        title: '修改资料'
+      })
+      this.type = options.type;
+      this.getBusinessInfo();
+    }
+    if(options.pass){
+      this.setData({
+        is_pass: options.pass
+      })
+    }
   },
 
   /**
@@ -84,6 +95,29 @@ Page({
   onShareAppMessage: function () {
 
   },
+  getBusinessInfo(){
+    queryBusinessInfo().then((res)=>{
+      if(res.code == 200){
+        this.setData({
+          business_id: res.data.businessId,
+          name: res.data.bossName,
+          license: res.data.licenseImg,
+          is_license: res.data.licenseImg==''?0:1,
+          back_img: res.data.businessImg,
+          is_back: res.data.businessImg==''?0:1,
+          person_name: res.data.legalPerson,
+          card: res.data.idnumber,
+          person_code: res.data.uscc,
+          company_name: res.data.businessName,
+          card_img: res.data.idnumberImg,
+          is_card: res.data.idnumberImg==''?0:1,
+          book_img: res.data.authorizeImg,
+          is_book: res.data.authorizeImg==''?0:1,
+          is_pass: 0
+        })
+      }
+    })
+  },
   getName(e){
     this.setData({
       name: e.detail.value
@@ -111,7 +145,7 @@ Page({
   },
   chooseLicense(e){
     var that = this;
-    publicFun.getImage(1,false,'album').then((res)=>{
+    publicFun.getImage(1,false,['album']).then((res)=>{
       // uploadFile({
       //   file: res[0]
       // }).then((imgRes)=>{
@@ -125,9 +159,18 @@ Page({
           'Authentication': wx.getStorageSync('token')
         },
         success (imgRes){
-          console.log(JSON.stringify(imgRes.data))
-          console.log(JSON.parse(imgRes.data).data)
+          // console.log('----ios1----'+JSON.stringify(imgRes))
+          // console.log('----ios2----'+JSON.stringify(imgRes.data))
+          // console.log('----ios3----'+JSON.parse(imgRes.data).data)
+          let res = wx.getSystemInfoSync();
           let img_pic = JSON.parse(imgRes.data).data;
+          if(res.platform == 'ios'){
+            console.log('ios手机');
+          }
+          if(res.platform == 'android'){
+            console.log('android手机');
+          }
+          
           that.setData({
             license: img_pic,
             is_license: 1
@@ -138,7 +181,7 @@ Page({
   },
   chooseImageFun(e){
     var that = this;
-    publicFun.getImage(1,false,'album').then((res)=>{
+    publicFun.getImage(1,false,['album']).then((res)=>{
       wx.uploadFile({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
@@ -158,7 +201,7 @@ Page({
   },
   chooseCardImage(e){
     var that = this;
-    publicFun.getImage(1,false,'album').then((res)=>{
+    publicFun.getImage(1,false,['album']).then((res)=>{
       wx.uploadFile({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
@@ -178,7 +221,7 @@ Page({
   },
   chooseBookImage(e){
     var that = this;
-    publicFun.getImage(1,false,'album').then((res)=>{
+    publicFun.getImage(1,false,['album']).then((res)=>{
       wx.uploadFile({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
@@ -240,7 +283,9 @@ Page({
       })
       return;
     }
+    console.log(this.data.business_id)
     addMerchantInfo({
+      businessId: this.data.business_id,
       businessName: this.data.company_name,//企业名称
       legalPerson: this.data.person_name,//法人名称
       uscc: this.data.person_code,//统一社会信用代码
@@ -252,22 +297,24 @@ Page({
       authorizeImg: this.data.book_img//授权图片
     }).then(res=>{
       if(res.code == 200){
-        this.setData({
-          name: '',
-          license: '',
-          is_license: 0,
-          back_img: '',
-          is_back: 0,
-          person_name: '',
-          card: '',
-          person_code: '',
-          company_name: '',
-          card_img: '',
-          is_card: 0,
-          book_img: '',
-          is_book: 0,
-          is_pass: 1
-        })
+        if(this.data.business_id == ''){
+          this.setData({
+            name: '',
+            license: '',
+            is_license: 0,
+            back_img: '',
+            is_back: 0,
+            person_name: '',
+            card: '',
+            person_code: '',
+            company_name: '',
+            card_img: '',
+            is_card: 0,
+            book_img: '',
+            is_book: 0,
+            is_pass: 1
+          })
+        }
         wx.showToast({
           title: '提交成功',
           icon: 'none'

@@ -29,17 +29,21 @@ Page({
       context: '销售员申请列表'
     }).then(res=>{
       // 查看申请人列表
-      applicationMemberList({
-        data: res.data,
-        pageNum: this.data.page,
-        pageSize: 10,
-        type: 'seller'
-      }).then(ress=>{
-        this.setData({
-          list: this.data.list.concat(ress.data.records),
-          totalPage: ress.data.pages
+      if(res.code == 200){
+        applicationMemberList({
+          data: res.data,
+          pageNum: this.data.page,
+          pageSize: 10,
+          type: 'seller'
+        }).then(ress=>{
+          if(ress.code == 200){
+            this.setData({
+              list: this.data.list.concat(ress.data.records),
+              totalPage: ress.data.pages
+            })
+          }
         })
-      })
+      }
     })
   },
   getSeller(){
@@ -48,10 +52,12 @@ Page({
       pageSize: 10,
       type: 'seller'
     }).then(res=>{
-      this.setData({
-        list: this.data.list.concat(res.data.records),
-        totalPage: res.data.pages
-      })
+      if(res.code == 200){
+        this.setData({
+          list: this.data.list.concat(res.data.records),
+          totalPage: res.data.pages
+        })
+      }
     })
   },
   loadMore(e){
@@ -147,8 +153,10 @@ Page({
         let index = e.currentTarget.dataset.index;
         this.data.list[index].status = '通过';
         this.setData({
-          list: this.data.list
+          list: [],
+          page: 1
         })
+        this.getApply();
       }
     })
   },
@@ -166,8 +174,40 @@ Page({
         let index = e.currentTarget.dataset.index;
         this.data.list[index].status = '未通过';
         this.setData({
-          list: this.data.list
+          list: [],
+          page: 1
         })
+        this.getApply();
+      }
+    })
+  },
+  clickDelete(e){
+    let that = this;
+    wx.showModal({
+      title: '提示',
+      content: '确认删除该成员?',
+      success (res){
+        if(res.confirm){
+          memberManage({
+            memberId: e.currentTarget.dataset.id,
+            status: '3',
+            type: 'seller'
+          }).then((res)=>{
+            if(res.code == 200){
+              wx.showToast({
+                title: '已删除',
+                icon: 'none'
+              })
+              that.setData({
+                list: [],
+                page: 1
+              })
+              setTimeout(()=>{
+                that.getSeller();
+              },1500)
+            }
+          })
+        }
       }
     })
   }

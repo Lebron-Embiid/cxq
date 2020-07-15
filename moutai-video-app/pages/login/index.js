@@ -47,13 +47,15 @@ Page({
                     sessionKey: skres.data.sessionKey,
                     unionId: skres.data.openId
                   }).then(logRes => {
-                    wx.setStorage({
-                      key: "token",
-                      data: logRes.data.token
-                    })
-                    wx.redirectTo({
-                      url: "/pages/userInfo/index"
-                    })
+                    if(logRes.code == 200){
+                      wx.setStorage({
+                        key: "token",
+                        data: logRes.data.token
+                      })
+                      wx.redirectTo({
+                        url: "/pages/userInfo/index"
+                      })
+                    }
                   }).catch(err => {
                     wx.showToast({
                       title: err
@@ -165,14 +167,16 @@ Page({
                     sessionKey: skres.data.sessionKey,
                     unionId: that.openId
                   }).then(logRes => {
-                    wx.setStorage({
-                      key: "token",
-                      data: logRes.data.token
-                    })
-                   
-                    wx.redirectTo({
-                      url: '/pages/index/index'
-                    })
+                    if(res.code == 200){
+                      wx.setStorage({
+                        key: "token",
+                        data: logRes.data.token
+                      })
+                    
+                      wx.redirectTo({
+                        url: '/pages/index/index'
+                      })
+                    }
                   }).catch(err => {
                     wx.hideLoading()
                   })

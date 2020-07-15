@@ -19,7 +19,11 @@ import {
   queryBusinessImg,
   getSessinKey,
   update_phone,
-  update_user_info
+  update_user_info,
+  delCoupon,
+  delCouponAgent,
+  changeUserType,
+  hasUserType
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
@@ -34,7 +38,7 @@ Page({
     phone: '',
     coupon_id: '',
     is_home: true,
-    identity: null,//boss agent seller 
+    identity: '',//boss agent seller 
     id_title: '',
     promotion_list: [],
     coupon_list: [],
@@ -51,6 +55,7 @@ Page({
     dataStr: '',
     consumerId: '',
     is_click: false,  //是否点击我的商家按钮
+    has_user: 0,
   },
 
   /**
@@ -80,11 +85,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    queryBusinessImg().then((res)=>{
-      this.setData({
-        shangjia_img: res.data
-      })
-    })
+    
   },
   /**
    * 生命周期函数--监听页面显示
@@ -95,21 +96,6 @@ Page({
     //   is_issue: 0
     // })
     var that = this;
-    queryBusinessInfo().then((res)=>{
-      if(res.code == 200){
-        console.log(JSON.stringify(res.data.status))
-        if(res.data.status == '待审批'){
-          that.setData({
-            is_pass: 1
-          })
-        }else{
-          this.setData({
-            is_pass: 0
-          })
-        }
-      }
-    })
-
     wx.checkSession({
       success () {
         console.log('登录未过期');
@@ -118,7 +104,36 @@ Page({
           key: 'check',
         })
         //session_key 未过期，并且在本生命周期一直有效
-    
+        hasUserType().then((ress)=>{
+          if(ress.code == 200){
+            that.setData({
+              has_user: ress.data
+            })
+          }
+        })
+
+        queryBusinessImg().then((res)=>{
+          if(res.code == 200){
+            that.setData({
+              shangjia_img: res.data
+            })
+          }
+        })
+        queryBusinessInfo().then((res)=>{
+          if(res.code == 200){
+            console.log(JSON.stringify(res.data.status))
+            if(res.data.status == '待审批'){
+              that.setData({
+                is_pass: 1
+              })
+            }else{
+              that.setData({
+                is_pass: 0
+              })
+            }
+          }
+        })
+        
         getInfo().then(res=>{
           if(res.code == 200){
             // var promotion_list = [];
@@ -270,20 +285,22 @@ Page({
       pageNum: this.data.page,
       pageSize: 5
     }).then(ress=>{
-      let coupon_list = [];
-      for(let i in ress.data){
-        let random = Math.floor(Math.random()*99999999);
-        let base64 = "data:image/png;base64," + ress.data[i];
-        base64src(base64,i,image=>{
-          this.data.coupon_list.push({
-            id: i,
-            src: image
+      if(ress.code == 200){
+        let coupon_list = [];
+        for(let i in ress.data){
+          let random = Math.floor(Math.random()*99999999);
+          let base64 = "data:image/png;base64," + ress.data[i];
+          base64src(base64,i,image=>{
+            this.data.coupon_list.push({
+              id: i,
+              src: image
+            })
+            this.setData({
+              coupon_list: this.data.coupon_list,
+              pages: ress.data.pages
+            })
           })
-          this.setData({
-            coupon_list: this.data.coupon_list,
-            pages: ress.data.pages
-          })
-        })
+        }
       }
     })
   },
@@ -293,21 +310,24 @@ Page({
       pageNum: this.data.page,
       pageSize: 5
     }).then(res=>{
-      for(let i in res.data.records){
-        let item = res.data.records[i];
-        let random = Math.floor(Math.random()*99999999);
-        let base64 = "data:image/png;base64," + item.rqcode;
-        let coupon_list = [];
-        base64src(base64,item.couponId,ress=>{
-          this.data.coupon_list.push({
-            id: item.couponId,
-            src: ress
-          });
-          this.setData({
-            coupon_list: this.data.coupon_list,
-            pages: res.data.pages
+      if(res.code == 200){
+        for(let i in res.data.records){
+          let item = res.data.records[i];
+          let random = Math.floor(Math.random()*99999999);
+          let base64 = "data:image/png;base64," + item.rqcode;
+          let coupon_list = [];
+          base64src(base64,item.couponId,ress=>{
+            this.data.coupon_list.push({
+              id: item.couponId,
+              src: ress,
+              couponName: item.couponName
+            });
+            this.setData({
+              coupon_list: this.data.coupon_list,
+              pages: res.data.pages
+            })
           })
-        })
+        }
       }
     })
   },
@@ -319,22 +339,25 @@ Page({
       pageSize: 5
     }
     addCouponAgentList(data).then(res=>{
-      for(let i in res.data.records){
-        let random = Math.floor(Math.random()*99999999);
-        let item = res.data.records[i];
-        let base64 = "data:image/png;base64," + item.rqcode;
-        let issued_list = [];
-        base64src(base64,item.couponId,ress=>{
-          this.data.issued_list.push({
-            id: item.couponId,
-            src: ress,
-            certId: item.certId
-          });
-          this.setData({
-            issued_list: this.data.issued_list,
-            pages: res.data.pages
+      if(res.code == 200){
+        for(let i in res.data.records){
+          let random = Math.floor(Math.random()*99999999);
+          let item = res.data.records[i];
+          let base64 = "data:image/png;base64," + item.rqcode;
+          let issued_list = [];
+          base64src(base64,item.couponId,ress=>{
+            this.data.issued_list.push({
+              id: item.couponId,
+              src: ress,
+              certId: item.certId,
+              couponName: item.couponName
+            });
+            this.setData({
+              issued_list: this.data.issued_list,
+              pages: res.data.pages
+            })
           })
-        })
+        }
       }
     })
   },
@@ -346,22 +369,25 @@ Page({
       pageSize: 5
     }
     addCouponAgentList(data).then(res=>{
-      for(let i in res.data.records){
-        let random = Math.floor(Math.random()*99999999);
-        let item = res.data.records[i];
-        let base64 = "data:image/png;base64," + item.rqcode;
-        let issued_list = [];
-        base64src(base64,item.couponId,ress=>{
-          this.data.issued_list.push({
-            id: item.couponId,
-            src: ress,
-            certId: item.certId
-          });
-          this.setData({
-            issued_list: this.data.issued_list,
-            pages: res.data.pages
+      if(res.code == 200){
+        for(let i in res.data.records){
+          let random = Math.floor(Math.random()*99999999);
+          let item = res.data.records[i];
+          let base64 = "data:image/png;base64," + item.rqcode;
+          let issued_list = [];
+          base64src(base64,item.couponId,ress=>{
+            this.data.issued_list.push({
+              id: item.couponId,
+              src: ress,
+              certId: item.certId,
+              couponName: item.couponName
+            });
+            this.setData({
+              issued_list: this.data.issued_list,
+              pages: res.data.pages
+            })
           })
-        })
+        }
       }
     })
   },
@@ -519,30 +545,39 @@ Page({
           wx.scanCode({
             onlyFromCamera: true,
             success(res) {
-              // console.log('扫码返回的参数: '+res.result.length);
-              console.log(res.result.length)
-              if(res.result.length == 28){
-                that.setData({
-                  consumerId: res.result
-                })
-              }else{
-                let data = wx.getQueryString({
-                  url: res.result,
-                  name: "data"
-                });
-                that.setData({
-                  dataStr: data
-                })
-              }
-              if(that.data.dataStr != '' && that.data.consumerId != ''){
-                console.log('请求的参数：'+that.data.consumerId,that.data.dataStr);
+              console.log('扫码返回的参数: '+res.result);
+              console.log('截取字符串后：'+res.result.replace("https://p.3p3.top?data=",""))
+              // console.log(res.result.length)
+              that.setData({
+                dataStr: res.result.replace("https://p.3p3.top?data=","")
+              })
+              // let data = wx.getQueryString({
+              //   url: res.result,
+              //   name: "data"
+              // });
+              // that.setData({
+              //   dataStr: data
+              // })
+              // if(res.result.length == 28){
+              //   that.setData({
+              //     consumerId: res.result
+              //   })
+              // }else{
+                
+              // }
+              // && that.data.consumerId != ''
+              if(that.data.dataStr != ''){
+                console.log('请求的参数：'+that.data.dataStr);
                 couponSell({
-                  consumerId: that.data.consumerId,//消费者ID
                   data: that.data.dataStr//要购买的促销劵二维码
                 }).then(resg=>{
+                  console.log('出售成功：'+JSON.stringify(resg));
                   if(resg.code == 200){
                     // console.log(JSON.stringify(resg));
-                    publicFun.getToast(resg.data,'success')
+                    that.setData({
+                      dataStr: ''
+                    })
+                    publicFun.getToast('出售成功！','success');
                   }
                 })
               }
@@ -552,20 +587,22 @@ Page({
         }
         if(e.detail.index == 1){
           // 验证
+          var that = this;
           wx.scanCode({
             onlyFromCamera: true,
             success (res) {
-              // console.log('扫码返回的参数1'+JSON.stringify(res.result));
-              let data = wx.getQueryString({
-                url: res.result,
-                name: "data"
-              });
-              // console.log('扫码返回的参数2'+JSON.stringify(data));
+              console.log('扫码返回的参数1'+JSON.stringify(res.result));
+              // let data = wx.getQueryString({
+              //   url: res.result,
+              //   name: "data"
+              // });
+              let data = res.result.replace("https://p.3p3.top?data=","");
+              console.log('扫码返回的参数2'+JSON.stringify(data));
               couponConsume({
                 param: data
               }).then((resg)=>{
                 if(resg.code == 200){
-                  publicFun.getToast(resg.data,'success')
+                  publicFun.getToast('验证成功！','success');
                 }
               })
             }
@@ -671,32 +708,46 @@ Page({
   updateToken(){
     var that = this;
     update_user_info().then((res)=>{
-      wx.removeStorageSync('token');
-      wx.setStorage({
-        key: "token",
-        data: res.data.token,
-        success: ()=>{
-          var id_title = '';
-          var back_img = '../../assets/indexBackground.png';
-          var promotion_list = [
-            {icon: '/assets/nav_icon9.png',title: '我当销售员'},
-            {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-            {icon: '/assets/nav_icon6.png',title: '我发促销券'}
-          ]
-          that.setData({
-            is_home: true,
-            is_click: false,
-            id_title: '',
-            back_img: back_img,
-            promotion_list: promotion_list
-          })
-          that.onShow();
-        }
-      })
+      if(res.code == 200){
+        wx.removeStorageSync('token');
+        wx.setStorage({
+          key: "token",
+          data: res.data.token,
+          success: ()=>{
+            var id_title = '';
+            var back_img = '../../assets/indexBackground.png';
+            var promotion_list = [
+              {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+              {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+              {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+            ]
+            that.setData({
+              is_home: true,
+              is_click: false,
+              id_title: '',
+              back_img: back_img,
+              promotion_list: promotion_list
+            })
+            that.onShow();
+          }
+        })
+      }
     })
   },
   getUserPhone(e){
     var that = this;
+    wx.getNetworkType({
+      success (res) {
+        console.log(res.networkType);
+        if(res.networkType == 'unknown' || res.networkType == 'none'){
+          wx.showToast({
+            title: '请检查网络状态',
+            icon: 'none'
+          })
+          return;
+        }
+      }
+    })
     wx.login({
       success: (resg) => {
         getSessinKey(resg.code).then(skres => {
@@ -705,14 +756,16 @@ Page({
             iv: e.detail.iv,
             sessionKey: skres.data.sessionKey
           }).then((upres)=>{
-            wx.removeStorageSync('token');
-            wx.setStorage({
-              key: "token",
-              data: upres.data.token,
-              success: ()=>{
-                that.onShow();
-              }
-            })
+            if(upres.code == 200){
+              wx.removeStorageSync('token');
+              wx.setStorage({
+                key: "token",
+                data: upres.data.token,
+                success: ()=>{
+                  that.onShow();
+                }
+              })
+            }
           })
         })
       }
@@ -722,10 +775,11 @@ Page({
     wx.scanCode({
       success(res) {
         console.log('扫码返回的参数'+res.result);
-        let data = wx.getQueryString({
-          url: res.result,
-          name: "data"
-        });
+        // let data = wx.getQueryString({
+        //   url: res.result,
+        //   name: "data"
+        // });
+        let data = res.result.replace("https://p.3p3.top?data=","");
         wx.setStorage({
           data: data,
           key: 'params',
@@ -757,7 +811,7 @@ Page({
   selectCoupon(e){
     let index = e.currentTarget.dataset.index;
     console.log(index)
-    if(this.data.identity ==  'boss'){
+    if(this.data.identity == 'boss'){
       if(this.data.index == 0){
         // 促销券编辑
         wx.navigateTo({
@@ -786,10 +840,12 @@ Page({
         addCouponAgent({
           couponId: this.data.coupon_list[index].id
         }).then(ress=>{
-          wx.showToast({
-            title: ress.msg,
-            duration: 1500
-          })
+          if(ress.code == 200){
+            wx.showToast({
+              title: ress.msg,
+              duration: 1500
+            })
+          }
           // setTimeout(()=>{
           //   this.setData({
           //     is_home: true
@@ -834,7 +890,15 @@ Page({
     var identity = this.data.identity;
     var is_click = !this.data.is_click;
     var back_img = '';
+
     if(is_click){
+      queryBusinessImg().then((res)=>{
+        if(res.code == 200){
+          this.setData({
+            shangjia_img: res.data
+          })
+        }
+      })
       back_img = this.data.shangjia_img;
       if(identity == 'boss'){
         // 老板
@@ -883,7 +947,7 @@ Page({
     })
   },
   selectUserCoupon(){
-    publicFun.getImage(1,false,'album').then((res)=>{
+    publicFun.getImage(1,false,['album']).then((res)=>{
       wx.uploadFile({
         url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
         filePath: res[0],
@@ -898,6 +962,85 @@ Page({
           })
         }
       })
+    })
+  },
+  delCoupon(e){
+    var that = this;
+    let index = e.currentTarget.dataset.index;
+    wx.showModal({
+      title: '提示',
+      content: '确定删除该促销券？',
+      success (res){
+        if(res.confirm){
+          if(that.data.identity == 'boss'){
+            delCoupon({
+              couponId: that.data.issued_list[index].id
+            }).then((resp)=>{
+              if(resp.code == 200){
+                publicFun.getToast(resp.code);
+                that.setData({
+                  page: 1,
+                  is_list: 1,
+                  status: 1,
+                  is_home: false,
+                  issued_list: []
+                })
+                that.getIssuedList(1);
+              }
+            })
+          }
+          if(that.data.identity == 'agent'){
+            delCouponAgent({
+              certId: that.data.issued_list[index].id
+            }).then((resp)=>{
+              if(resp.code == 200){
+                publicFun.getToast(resp.code);
+                that.setData({
+                  page: 1,
+                  is_list: 1,
+                  status: 1,
+                  is_home: false,
+                  issued_list: []
+                })
+                that.getIssuedList1(1);
+              }
+            })
+          }
+        }
+      }
+    })
+  },
+  changeIdentity(){
+    var that = this;
+    wx.showActionSheet({
+      itemList: ['老板','代理人','销售员','消费者'],
+      success (res){
+        console.log(res.tapIndex);
+        var id_type = '';
+        if(res.tapIndex == 0){
+          id_type = 'boss';
+        }else if(res.tapIndex == 1){
+          id_type = 'agent';
+        }else if(res.tapIndex == 2){
+          id_type = 'seller';
+        }else{
+          id_type = '';
+        }
+        changeUserType({
+          type: id_type
+        }).then((res)=>{
+          if(res.code == 200){
+            that.updateToken();
+            hasUserType().then((ress)=>{
+              if(ress.code == 200){
+                that.setData({
+                  has_user: ress.data
+                })
+              }
+            })
+          }
+        })
+      }
     })
   }
 })

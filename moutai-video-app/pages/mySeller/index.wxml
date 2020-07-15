@@ -15,6 +15,9 @@
           <button size="mini" wx:if="{{item.status==0}}" type="primary" data-index="{{index}}" data-id="{{item.memberId}}" bindtap="clickAgree">同意</button>
           <button size="mini" wx:if="{{item.status==0}}" type="default" data-index="{{index}}" data-id="{{item.memberId}}" bindtap="clickReject">拒绝</button>
         </view>
+        <view class="info_btn" wx:if="{{activeIndex == 1}}">
+          <button size="mini" type="warn" data-index="{{index}}" data-id="{{item.memberId}}" bindtap="clickDelete">删除</button>
+        </view>
       </view>
     </view>
   </scroll-view>

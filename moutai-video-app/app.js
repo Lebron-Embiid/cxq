@@ -1,6 +1,11 @@
 //app.js
 App({
+  globalData: {
+    userInfo: null,
+    is_login: 0
+  },
   onLaunch: function() {
+    var that = this;
     wx.checkSession({
       success () {
         console.log('登录未过期');
@@ -27,9 +32,6 @@ App({
     wx.decodeUnicode = this.decodeUnicode;
     //解析url中的参数
     wx.getQueryString = this.getQueryString;
-  },
-  globalData: {
-    userInfo: null
   },
   //格式化传参
   formatParmas(array) {

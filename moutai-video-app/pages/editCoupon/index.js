@@ -11,6 +11,7 @@ Page({
    */
   data: {
     id: '', //促销券id
+    coupon_name: '',
     price: '',
     face: '',
     count: '',
@@ -19,7 +20,7 @@ Page({
     date_txt: '请选择促销券有效时间',
     is_edit: false,
     couponId: '',
-    video_list: [{sort: 1,videoName: '',weseeLink: ''},{sort: 2,videoName: '',weseeLink: ''},{sort: 3,videoName: '',weseeLink: ''}]
+    video_list: [{sort: 1,videoName: '视频1',weseeLink: ''},{sort: 2,videoName: '视频2',weseeLink: ''},{sort: 3,videoName: '视频3',weseeLink: ''}]
   },
 
   /**
@@ -55,16 +56,22 @@ Page({
         this.setData({
           is_edit: res.data!=null?true:false,
           couponId: res.data!=null?res.data.couponId:'',
-          count: res.data.count,
-          price: res.data.price,
-          profit: res.data.profit==null?this.data.profit:res.data.profit,
-          date: res.data.trem,
-          date_txt: res.data.trem!=''?res.data.trem:'请选择促销券有效时间',
-          face: res.data.value,
-          video_list: res.data.codeVideoList==null?this.data.video_list:res.data.codeVideoList
+          coupon_name: res.data!=null?res.data.couponName:'',
+          count: res.data!=null?res.data.count:'',
+          price: res.data!=null?res.data.price:'',
+          profit: res.data!=null?res.data.profit:'',
+          date: res.data!=null?res.data.trem:'',
+          date_txt: res.data!=null?res.data.trem:'请选择促销券有效时间',
+          face: res.data!=null?res.data.value:'',
+          video_list: res.data!=null?res.data.codeVideoList:this.data.video_list
         })
         if(save){
           publicFun.getToast('编辑成功');
+          setTimeout(()=>{
+            wx.navigateBack({
+              delta: 1
+            })
+          },1500)
         }
         console.log(this.data.is_edit,this.data.couponId)
       }
@@ -103,6 +110,11 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+  getCouponName(e){
+    this.setData({
+      coupon_name: e.detail.value
+    })
   },
   getPrice(e){
     this.setData({
@@ -172,11 +184,12 @@ Page({
       publicFun.getToast('请至少上传一个视频链接');
       return;
     }
-    if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
-      publicFun.getToast('请填写视频名称');
-      return;
-    }
+    // if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
+    //   publicFun.getToast('请填写视频名称');
+    //   return;
+    // }
     let data = {
+      couponName: this.data.coupon_name,
       imageNum: this.data.id,
       price: this.data.price,
       trem: this.data.date,
@@ -189,6 +202,7 @@ Page({
     if(this.data.is_edit == true){
       data = {
         couponId: this.data.couponId,
+        couponName: this.data.coupon_name,
         imageNum: this.data.id,
         price: this.data.price,
         trem: this.data.date,
@@ -210,11 +224,12 @@ Page({
       publicFun.getToast('请至少上传一个视频链接');
       return;
     }
-    if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
-      publicFun.getToast('请填写视频名称');
-      return;
-    }
+    // if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
+    //   publicFun.getToast('请填写视频名称');
+    //   return;
+    // }
     let data = {
+      couponName: this.data.coupon_name,
       imageNum: this.data.id,
       price: this.data.price,
       trem: this.data.date,
@@ -227,6 +242,7 @@ Page({
     if(this.data.is_edit == true){
       data = {
         couponId: this.data.couponId,
+        couponName: this.data.coupon_name,
         imageNum: this.data.id,
         price: this.data.price,
         trem: this.data.date,
@@ -241,6 +257,7 @@ Page({
       if(res.code == 200){
         let video_list = [{sort: 1,videoName: '',weseeLink: ''},{sort: 2,videoName: '',weseeLink: ''},{sort: 3,videoName: '',weseeLink: ''}];
         this.setData({
+          coupon_name: '',
           price: '',
           date: '',
           date_txt: '请选择促销券有效时间',
@@ -250,6 +267,11 @@ Page({
           video_list: video_list
         })
         publicFun.getToast('发行成功');
+        setTimeout(()=>{
+          wx.navigateBack({
+            delta: 1
+          })
+        },1500)
       }
     })
   }

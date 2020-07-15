@@ -11,7 +11,19 @@
     <view class="nav_tab_box" wx:if="{{type == 'boss'}}">
       <view class="nav_item {{activeIndex==index?'active':''}}" bindtap="clickNav" data-index="{{index}}" wx:for="{{tab_list}}" wx:key="index">{{item}}</view>
     </view>
-    <view class="table_box">
+    <view class="table_box" wx:if="{{activeIndex==0}}">
+      <view class="table_item">
+        <view class="table_th">代理人</view>
+        <view class="table_th">被出售张数</view>
+        <view class="table_th">操作</view>
+      </view>
+      <view class="table_item" wx:for="{{list}}" wx:key="index">
+        <view class="table_td">{{item.nickname}}</view>
+        <view class="table_td">{{item.sellCount?item.sellCount:0}}</view>
+        <view class="table_td"><van-button bind:click="toDetail" data-id="{{item.memberId}}" color="#37444A" type="primary" size="small">详情</van-button></view>
+      </view>
+    </view>
+    <view class="table_box" wx:if="{{activeIndex==1}}">
       <view class="table_item">
         <view class="table_th">销售员</view>
         <view class="table_th">出售</view>

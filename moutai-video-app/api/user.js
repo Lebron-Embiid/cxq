@@ -39,6 +39,14 @@ export function show_coupon_image(data) {
     data
   })
 }
+//展示促销劵(原始图)
+export function buy_coupon(data) {
+  return request({
+    url: "/applet/coupon/buy_coupon",
+    method: "GET",
+    data
+  })
+}
 //展示[已购]促销劵(原始图)
 export function show_sell_coupon_image(data) {
   return request({
@@ -343,7 +351,7 @@ export function memberManage(data) {
 export function queryBusinessInfo() {
   return request({
     url: "/applet/user/queryBusinessInfo",
-    method: "POST"
+    method: "GET"
   })
 }
 //文件上传
@@ -365,13 +373,42 @@ export function showUserQRCode(data) {
 //促销券浏览
 export function queryCouponBrowse(data) {
   return request({
-    url: "/applet/video/queryCouponBrowse",
+    url: "/applet/coupon/queryCouponBrowse",
     method: "GET",
     data
   })
 }
-
-
+//身份切换
+export function changeUserType(data) {
+  return request({
+    url: "/applet/user/change_user_type",
+    method: "GET",
+    data
+  })
+}
+//判断是否有身份切换
+export function hasUserType() {
+  return request({
+    url: "/applet/user/has_user_type",
+    method: "GET"
+  })
+}
+//老板-促销券删除
+export function delCoupon(data) {
+  return request({
+    url: "/applet/coupon/del_coupon",
+    method: "GET",
+    data
+  })
+}
+//代理人-促销券删除
+export function delCouponAgent(data) {
+  return request({
+    url: "/applet/coupon/del_coupon_agent",
+    method: "GET",
+    data
+  })
+}
 
 
 

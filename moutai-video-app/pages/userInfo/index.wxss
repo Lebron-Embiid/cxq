@@ -74,6 +74,13 @@ button.button-hover{
   width: 300rpx;
   margin-right: 30rpx;
 }
+.scroll_item .txt{
+  display: block;
+  color: #333333;
+  font-size: 28rpx;
+  text-align: center;
+  margin-bottom: 10rpx;
+}
 .scroll_item image{
   width: 100%;
 }

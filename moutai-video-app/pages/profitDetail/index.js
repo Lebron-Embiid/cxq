@@ -71,9 +71,11 @@ Page({
       }
     }
     agent_coupon_profit_info(data).then((res)=>{
-      this.setData({
-        list: this.data.list.concat(res.data.records)
-      })
+      if(res.code == 200){
+        this.setData({
+          list: this.data.list.concat(res.data.records)
+        })
+      }
     })
   },
   // 销售员收益详情
@@ -92,9 +94,11 @@ Page({
       }
     }
     seller_coupon_profit_info(data).then((res)=>{
-      this.setData({
-        list: this.data.list.concat(res.data.records)
-      })
+      if(res.code == 200){
+        this.setData({
+          list: this.data.list.concat(res.data.records)
+        })
+      }
     })
   },
   // 销售员折让详情
@@ -113,9 +117,11 @@ Page({
       }
     }
     seller_coupon_discount_info(data).then((res)=>{
-      this.setData({
-        list: this.data.list.concat(res.data.records)
-      })
+      if(res.code == 200){
+        this.setData({
+          list: this.data.list.concat(res.data.records)
+        })
+      }
     })
   },  
   bindDateChange(e){

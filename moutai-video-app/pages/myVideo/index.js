@@ -28,13 +28,15 @@ Page({
         current: this.data.page,
         size: 10
       }).then(res => {
-        let newList = this.data.dataList;
-        newList.push(...res.data.records)
-        this.setData({
-          dataList: newList,
-          pages: res.data.pages
-        })
-        resolve()
+        if(res.code == 200){
+          let newList = this.data.dataList;
+          newList.push(...res.data.records)
+          this.setData({
+            dataList: newList,
+            pages: res.data.pages
+          })
+          resolve()
+        }
       }).catch(err => {
         resolve()
       })

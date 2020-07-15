@@ -24,8 +24,21 @@ Component({
    */
   methods: {
     getWxLogin(){
+      wx.getNetworkType({
+        success (res) {
+          console.log(res.networkType);
+          if(res.networkType == 'unknown' || res.networkType == 'none'){
+            wx.showToast({
+              title: '请检查网络状态',
+              icon: 'none'
+            })
+            return;
+          }
+        }
+      })
       wx.login({
         success: (resg) => {
+          console.log('11111'+JSON.stringify(resg))
           if (resg.code) {
             getSessinKey(resg.code).then(skres => {
               if (skres.code == 200) {
@@ -45,15 +58,17 @@ Component({
                       unionId: skres.data.openId
                     }).then(logRes => {
                       console.log(logRes.data)
-                      wx.setStorage({
-                        key: "token",
-                        data: logRes.data.token
-                      })
-                      wx.setStorage({
-                        key: "userInfo",
-                        data: logRes.data
-                      })
-                      this.triggerEvent('mylogin')
+                      if(logRes.code == 200){
+                        wx.setStorage({
+                          key: "token",
+                          data: logRes.data.token
+                        })
+                        wx.setStorage({
+                          key: "userInfo",
+                          data: logRes.data
+                        })
+                        this.triggerEvent('mylogin')
+                      }
                     }).catch(err => {
                       wx.showToast({
                         title: err
@@ -67,6 +82,9 @@ Component({
           } else {
             console.log('登录失败！' + res.errMsg)
           }
+        },
+        fail: (err)=>{
+          console.log('取消授权：'+JSON.stringify(err))
         }
       })
     },
@@ -78,7 +96,14 @@ Component({
         },
         fail () {
           // session_key 已经失效，需要重新执行登录流程
-          that.getWxLogin();
+          wx.getSetting({
+            success (res) {
+              console.log(res.authSetting['scope.userInfo'])
+              if(res.authSetting['scope.userInfo'] == true){
+                that.getWxLogin();
+              }
+            }
+          })
         }
       })
     }

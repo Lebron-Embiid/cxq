@@ -120,9 +120,11 @@ Page({
       pageNum: this.data.page,
       pageSize: 20
     }).then((res)=>{
-      this.setData({
-        list: this.data.list.concat(res.data.records)
-      })
+      if(res.code == 200){
+        this.setData({
+          list: this.data.list.concat(res.data.records)
+        })
+      }
     })
   },
   getSellerProfitList(){
@@ -131,9 +133,11 @@ Page({
       pageNum: this.data.page,
       pageSize: 20
     }).then((res)=>{
-      this.setData({
-        list: this.data.list.concat(res.data.records)
-      })
+      if(res.code == 200){
+        this.setData({
+          list: this.data.list.concat(res.data.records)
+        })
+      }
     })
   },
   toDetail(e){

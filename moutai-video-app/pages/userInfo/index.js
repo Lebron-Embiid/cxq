@@ -62,15 +62,36 @@ Page({
     //     }
     //   }
     // })
-
+    var that = this;
     //获取用户信息
+    wx.checkSession({
+      success () {
+        console.log('登录未过期');
+        wx.setStorage({
+          data: 1,
+          key: 'check',
+        })
+        that.getUserInfo();
+      },
+      fail () {
+        console.log('登录已过期');
+        wx.setStorage({
+          data: 2,
+          key: 'check',
+        })
+        that.getUserInfo();
+        // session_key 已经失效，需要重新执行登录流程
+      }
+    })
+  },
+  getUserInfo(){
     getInfo().then(res=>{
       if(res.code == 401){
         
       }
       if(res.code == 200){
         let nav_list = [];
-        if(res.data.type == null){
+        if(res.data.type == 'consumer' || res.data.type == '' || res.data.type == null){
           nav_list = ['浏览促销券','收藏促销券','已购促销券'];
         }
         if(res.data.type == 'seller'){
@@ -143,7 +164,8 @@ Page({
             this.data.look_list.push({
               certId: item.certId,
               couponId: item.couponId,
-              coupon: ress
+              coupon: ress,
+              couponName: item.couponName
             });
             this.setData({
               look_list: this.data.look_list,
@@ -168,7 +190,8 @@ Page({
             this.data.collect_list.push({
               certId: item.certId,
               id: item.couponId,
-              coupon: ress
+              coupon: ress,
+              couponName: item.couponName
             });
             this.setData({
               collect_list: this.data.collect_list,
@@ -180,7 +203,7 @@ Page({
     })
   },
   getBuyList(){
-    if(this.data.identity == null){
+    if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
       queryMyCouponList({
         pageNum: this.data.page,
         pageSize: 5
@@ -194,7 +217,9 @@ Page({
               this.data.coupon_list.push({
                 certId: item.certId,
                 id: item.couponId,
-                coupon: ress
+                number: item.number,
+                coupon: ress,
+                couponName: item.couponName
               });
               this.setData({
                 coupon_list: this.data.coupon_list,
@@ -304,7 +329,7 @@ Page({
       coupon_list: [],
       collect_list: []
     })
-    if(this.data.identity == null){
+    if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
       if(index == 0){
         this.getLookList();
       }else if(index == 1){
@@ -389,7 +414,7 @@ Page({
   selectCoupon(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?buy=ok&src='+this.data.coupon_list[index].coupon+'&certId='+this.data.coupon_list[index].certId
+      url: '/pages/couponDetail/index?buy=ok&src='+this.data.coupon_list[index].coupon+'&certId='+this.data.coupon_list[index].certId+'&number='+this.data.coupon_list[index].number
     })
   },
   clickItem(e){
@@ -442,6 +467,11 @@ Page({
     wx.previewImage({
       current: 0, // 当前显示图片的http链接
       urls: that.data.code_img // 需要预览的图片http链接列表
+    })
+  },
+  changeMyInfo(){
+    wx.navigateTo({
+      url: '/pages/merchant/index?type=edit',
     })
   }
 })

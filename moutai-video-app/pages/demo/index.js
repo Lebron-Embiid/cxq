@@ -18,12 +18,14 @@ Page({
       console.log('扫码接收的参数'+data);
     }else{
       //解析url地址
+      // console.log(options.q)
       let newUrl = decodeURIComponent(options.q);
       //获取对应number参数
       data = wx.getQueryString({
         url: newUrl,
         name: "data"
       });
+      // let data = res.result.replace("https://p.3p3.top?data=","");
       console.log('222微信扫码接收的参数'+data);
     }
     // let data = wx.getStorageSync('params');

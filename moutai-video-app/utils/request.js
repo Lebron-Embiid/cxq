@@ -14,8 +14,8 @@ function getToken() {
 
 //url地址
 // const requestUrl = 'https://maotaiapi.lcpower.cn';
-const requestUrl = 'http://192.168.31.115:8080';
-// const requestUrl = 'https://p.3p3.top';
+// const requestUrl = 'http://192.168.31.115:8080';
+const requestUrl = 'https://p.3p3.top';
 
 /*
 method 方法
@@ -32,7 +32,7 @@ const server = function({
   params,
   header = getToken(),
   dataType = 'json',
-  timeout = 10000
+  timeout = 3000
 }) {
 
   return new Promise((resolve, reject) => {
@@ -49,7 +49,13 @@ const server = function({
       dataType,
       success: response => {
         let res = response.data;
-        if (res.code == 401) {} else if (res.code !== 200) {
+        if (res.code == 401) {
+          wx.showModal({
+            title: "提示",
+            content: res.msg || res.message,
+            showCancel: false
+          })
+        } else if (res.code != 200) {
           wx.showModal({
             title: "错误",
             content: res.msg || res.message,
@@ -61,7 +67,23 @@ const server = function({
       },
       fail: error => {
         wx.hideLoading()
-        reject(error);
+        wx.getNetworkType({
+          success (res) {
+            console.log(res.networkType);
+            if(res.networkType == 'unknown' || res.networkType == 'none'){
+              wx.showToast({
+                title: '请检查网络状态',
+                icon: 'none'
+              })
+              return;
+            }
+          }
+        })
+        wx.showToast({
+          title: '请求超时',
+          icon: 'none'
+        })
+        reject('错误：'+JSON.stringify(error));
       }
     })
   })

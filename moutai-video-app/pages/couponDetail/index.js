@@ -2,6 +2,7 @@
 import {
   showUserQRCode,
   save_coupon_image,
+  buy_coupon,
   show_coupon_image,
   show_sell_coupon_image
 } from '../../api/user.js'
@@ -26,38 +27,46 @@ Page({
   onLoad: function (options) {
     this.setData({
       // src: options.src,
-      cert_id: options.certId
+      cert_id: options.certId,
+      number: options.number
     })
     if(options.buy){
       show_sell_coupon_image({
-        certId: options.certId
+        certId: options.certId,
+        number: options.number
       }).then((res)=>{
-        const base64ImgUrl = "data:image/png;base64," + res.data;
-        base64src(base64ImgUrl,options.certId,ress=>{
-          this.setData({
-            src: ress
+        if(res.code == 200){
+          const base64ImgUrl = "data:image/png;base64," + res.data;
+          base64src(base64ImgUrl,options.certId,ress=>{
+            this.setData({
+              src: ress
+            })
           })
-        })
+        }
       })
     }else{
-      show_coupon_image({
+      buy_coupon({
         certId: options.certId
       }).then((res)=>{
-        const base64ImgUrl = "data:image/png;base64," + res.data;
-        base64src(base64ImgUrl,options.certId,ress=>{
-          this.setData({
-            src: ress
+        if(res.code == 200){
+          const base64ImgUrl = "data:image/png;base64," + res.data;
+          base64src(base64ImgUrl,options.certId,ress=>{
+            this.setData({
+              src: ress
+            })
           })
-        })
+        }
       })
     }
     
     save_coupon_image({
       certId: options.certId
     }).then((res)=>{
-      this.setData({
-        save_src: res.data
-      })
+      if(res.code == 200){
+        this.setData({
+          save_src: res.data
+        })
+      }
     })
     console.log(options);
     this.getQrCode();
@@ -70,13 +79,15 @@ Page({
   //获取二维码
   getQrCode(){
     showUserQRCode().then(res=>{
-      const base64ImgUrl = "data:image/png;base64," + res.data;
-      base64src(base64ImgUrl,1,ress=>{
-        this.data.user_code = ress;
-        this.setData({
-          user_code: this.data.user_code
+      if(res.code == 200){
+        const base64ImgUrl = "data:image/png;base64," + res.data;
+        base64src(base64ImgUrl,1,ress=>{
+          this.data.user_code = ress;
+          this.setData({
+            user_code: this.data.user_code
+          })
         })
-      })
+      }
     })
   },
 

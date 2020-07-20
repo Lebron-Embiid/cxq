@@ -2,6 +2,9 @@
   "pages": [
     "pages/promotion/index",
     "pages/userInfo/index",
+    "pages/search/index",
+    "pages/recordList/index",
+    "pages/inviteList/index",
     "pages/editCoupon/index",
     "pages/editIssue/index",
     "pages/merchant/index",

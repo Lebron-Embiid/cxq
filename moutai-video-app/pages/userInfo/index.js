@@ -48,7 +48,7 @@ Page({
    */
   onLoad(options) {
     console.log(wx.getStorageSync('token'));
-    // this.userInfo();
+    this.userInfo();
 
     // this.getLookList();
   },
@@ -98,10 +98,10 @@ Page({
           nav_list = ['已出售促销券','已验收促销券'];
         }
         if(res.data.type == 'agent'){
-          nav_list = ['浏览促销券','收藏促销券'];
+          nav_list = ['浏览促销券','收藏促销券','已购促销券'];
         }
         if(res.data.type == 'boss'){
-          nav_list = ['浏览促销券'];
+          nav_list = ['浏览促销券','收藏促销券','已购促销券'];
         }
         this.setData({
           nav_list: nav_list,
@@ -203,7 +203,8 @@ Page({
     })
   },
   getBuyList(){
-    if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
+    // == 'consumer' || this.data.identity == '' || this.data.identity == null
+    if(this.data.identity != 'seller'){
       queryMyCouponList({
         pageNum: this.data.page,
         pageSize: 5
@@ -310,9 +311,10 @@ Page({
   userInfo() {
     wx.getUserInfo({
       success: (res) => {
-        var userInfo = res.userInfo
-        var nickName = userInfo.nickName
-        var avatarUrl = userInfo.avatarUrl
+        var userInfo = res.userInfo;
+        var nickName = userInfo.nickName;
+        var avatarUrl = userInfo.avatarUrl;
+        console.log(JSON.stringify(userInfo));
         this.setData({
           avatar: userInfo.avatarUrl,
           name: userInfo.nickName
@@ -322,6 +324,7 @@ Page({
   },
   clickNav(e){
     let index = e.currentTarget.dataset.index;
+    console.log(index,this.data.identity)
     this.setData({
       nav_active: index,
       page: 1,
@@ -348,13 +351,19 @@ Page({
     if(this.data.identity == 'agent'){
       if(index == 0){
         this.getLookList();
-      }else{
+      }else if(index == 1){
         this.getCollectList();
+      }else{
+        this.getBuyList();
       }
     }
     if(this.data.identity == 'boss'){
       if(index == 0){
         this.getLookList();
+      }else if(index == 1){
+        this.getCollectList();
+      }else{
+        this.getBuyList();
       }
     }
   },
@@ -472,6 +481,16 @@ Page({
   changeMyInfo(){
     wx.navigateTo({
       url: '/pages/merchant/index?type=edit',
+    })
+  },
+  toRecordPage(){
+    wx.navigateTo({
+      url: '/pages/recordList/index',
+    })
+  },
+  toInviteAgent(){
+    wx.navigateTo({
+      url: '/pages/inviteList/index',
     })
   }
 })

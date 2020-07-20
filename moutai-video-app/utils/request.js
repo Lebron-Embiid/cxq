@@ -57,7 +57,7 @@ const server = function({
           })
         } else if (res.code != 200) {
           wx.showModal({
-            title: "错误",
+            title: "提示",
             content: res.msg || res.message,
             showCancel: false
           })

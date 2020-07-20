@@ -73,9 +73,9 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    let page = this.data.page++;
+    this.data.page++;
     this.setData({
-      page: page
+      page: this.data.page
     })
     if(this.data.activeIndex == 0){
       this.getAgentProfitList();

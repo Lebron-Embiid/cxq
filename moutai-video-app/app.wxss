@@ -74,7 +74,7 @@
 }
 .nav_content_box .content_item .head_left view{
   color: #333;
-  max-width: 120rpx;
+  max-width: 200rpx;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -87,20 +87,20 @@
   align-items: center;
 }
 .nav_content_box .content_item .info_right .info_time{
-  color: #999;
+  color: #999999;
   width: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   margin-right: 20rpx;
 }
-.nav_content_box .content_item .info_right .info_time text{
-  display: block;
-  margin-right: 10rpx;
-}
 .nav_content_box .content_item .info_right .info_btn{
   text-align: right;
   width: 50%;
+}
+.nav_content_box .content_item .info_right .info_btn text{
+  display: block;
+  color: #999999;
 }
 .nav_content_box .content_item .info_right .info_btn button{
   font-size: 24rpx;

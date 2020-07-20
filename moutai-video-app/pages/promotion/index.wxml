@@ -19,6 +19,10 @@
         <van-button wx:if="{{identity != 'seller'}}" bind:click="scanCode" color="#37444A" icon="scan" class="scanCode" type="primary" size="small">
           扫码播放视频
         </van-button>
+
+        <picker class="business_picker" wx:if="{{is_click == true && identity == 'agent' && myBusinessList.length != 0}}" bindchange="bindPickerChange" range-key="businessName" value="{{bus_index}}" range="{{myBusinessList}}">
+          <view class="my_business_box">选择商家：{{select_business}}</view>
+        </picker>
         <!-- <button wx:if="{{identity == 'boss' && is_issue == 1}}" type="primary" bindtap="toIssue" class="issue_btn" size="mini">从编辑发行</button> -->
       </view>
       
@@ -30,6 +34,7 @@
         <block wx:if="{{is_list == 0}}">
           <view class="browse_box">
             <van-button bindtap="selectUserCoupon" color="#37444A" type="primary" size="small" class="customize_add" wx:if="{{identity == 'boss'}}">自定义促销券</van-button>
+            <!-- <van-button bindtap="lookTemplate" color="#37444A" type="primary" size="small" class="template_btn" wx:if="{{identity == 'boss'}}">参考模板</van-button> -->
             <scroll-view bindscrolltolower="getCouponMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
               <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_list}}" wx:key="index">
                 <view class="txt">{{item.couponName}}</view>

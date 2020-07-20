@@ -10,8 +10,9 @@
         <view>{{item.memberName}}</view>
       </view>
       <view class="info_right">
-        <view class="info_time"><text wx:if="{{item.status!=0 && activeIndex == 0}}">{{item.status}}</text>{{item.date}}</view>
+        <view class="info_time">{{item.date}}</view>
         <view class="info_btn" wx:if="{{activeIndex == 0}}">
+          <text wx:if="{{item.status!=0 && activeIndex == 0}}">{{item.status}}</text>
           <button size="mini" wx:if="{{item.status==0}}" type="primary" data-index="{{index}}" data-id="{{item.memberId}}" bindtap="clickAgree">同意</button>
           <button size="mini" wx:if="{{item.status==0}}" type="default" data-index="{{index}}" data-id="{{item.memberId}}" bindtap="clickReject">拒绝</button>
         </view>

@@ -1,0 +1,13 @@
+<!--pages/search/index.wxml-->
+<view>
+  <view class="search_box">
+    <view class="search_item" wx:for="{{searchList}}" wx:key="index">
+      <view class="search_info">
+        <image src="{{item.headUrl}}"></image>
+        {{type=='boss'?item.nickname:item.businessName}}
+      </view>
+      <button size="mini" wx:if="{{type=='boss'}}" data-index="{{index}}" bindtap="inviteAgent">邀请代理</button>
+      <button size="mini" wx:else bindtap="roleAgent">申请代理</button>
+    </view>
+  </view>
+</view>

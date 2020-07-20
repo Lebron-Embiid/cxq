@@ -8,11 +8,11 @@
     </view>
     <view class="form_item">
       <text class="form_txt">促销券售价</text>
-      <view class="form_content"><input placeholder="请输入促销券价格" value="{{price}}" bindinput="getPrice"></input></view>
+      <view class="form_content"><input placeholder="请输入促销券价格" type="number" value="{{price}}" bindinput="getPrice"></input></view>
     </view>
     <view class="form_item">
       <text class="form_txt">促销券面额</text>
-      <view class="form_content"><input placeholder="请输入促销券面额" value="{{face}}" bindinput="getFace"></input></view>
+      <view class="form_content"><input placeholder="请输入促销券面额" type="number" value="{{face}}" bindinput="getFace"></input></view>
     </view>
     <view class="form_item">
       <text class="form_txt">促销券有效时间</text>
@@ -26,11 +26,11 @@
     </view>
     <view class="form_item">
       <text class="form_txt">促销券有效次数</text>
-      <view class="form_content"><input placeholder="请输入促销券有效次数" value="{{count}}" bindinput="getCount"></input></view>
+      <view class="form_content"><input placeholder="请输入促销券有效次数" type="number" value="{{count}}" bindinput="getCount"></input></view>
     </view>
     <view class="form_item">
       <text class="form_txt">代理人收益（每张）</text>
-      <view class="form_content"><input placeholder="请输入代理人收益" value="{{profit}}" bindinput="getProfit"></input></view>
+      <view class="form_content"><input placeholder="请输入代理人收益" type="number" value="{{profit}}" bindinput="getProfit"></input></view>
     </view>
     <view class="title">视频区</view>
     <view class="video_list_box" wx:for="{{video_list}}" wx:key="index">

@@ -23,7 +23,8 @@ import {
   delCoupon,
   delCouponAgent,
   changeUserType,
-  hasUserType
+  hasUserType,
+  my_business_list
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
@@ -56,6 +57,10 @@ Page({
     consumerId: '',
     is_click: false,  //是否点击我的商家按钮
     has_user: 0,
+    myBusinessList: [],
+    bus_index: 0,
+    select_bossId: '',
+    select_business: ''
   },
 
   /**
@@ -69,7 +74,7 @@ Page({
     //   pageNum: 1,
     //   pageSize: 5
     // }).then(res=>{})
-
+    
     let promotion_list = [
       {icon: '/assets/nav_icon9.png',title: '我当销售员'},
       {icon: '/assets/nav_icon8.png',title: '我做代理人'},
@@ -154,6 +159,9 @@ Page({
               phone: res.data.phone,
               identity: res.data.type
             })
+            if(res.data.type == 'agent'){
+              that.getMyBusinessList();
+            }
             // let identity = this.data.identity;
             // let identity = res.data.type;
             // if(identity == 'boss'){
@@ -279,6 +287,24 @@ Page({
       }
     })
   },
+  bindPickerChange(e){
+    let index = e.detail.value;
+    this.setData({
+      select_bossId: this.data.myBusinessList[index].bossId,
+      select_business: this.data.myBusinessList[index].businessName
+    })
+  },
+  getMyBusinessList(){
+    my_business_list().then((res)=>{
+      if(res.code == 200){
+        this.setData({
+          myBusinessList: res.data,
+          select_bossId: res.data[0].bossId,
+          select_business: res.data[0].businessName
+        })
+      }
+    })
+  },
   getCouponList(){
     // 查看可编辑的促销券列表(老板)
     shoWEditCouponList({
@@ -308,7 +334,8 @@ Page({
     // 查看可发行的促销券列表(代理人)
     getAgentCouponList({
       pageNum: this.data.page,
-      pageSize: 5
+      pageSize: 5,
+      bossId: this.data.select_bossId
     }).then(res=>{
       if(res.code == 200){
         for(let i in res.data.records){
@@ -366,7 +393,8 @@ Page({
     let data = {
       status: status,//1:当前  0:回顾
       pageNum: this.data.page,
-      pageSize: 5
+      pageSize: 5,
+      bossId: this.data.select_bossId
     }
     addCouponAgentList(data).then(res=>{
       if(res.code == 200){
@@ -488,6 +516,12 @@ Page({
 
           // })
         }
+        if(e.detail.index == 6){
+          //搜索代理人
+          wx.navigateTo({
+            url: '/pages/search/index?type=boss'
+          })
+        }
       }else if(this.data.identity == 'agent'){
         if(e.detail.index == 0){
           // 促销券收藏
@@ -513,7 +547,7 @@ Page({
         if(e.detail.index == 2){
           // 促销券回顾
           wx.navigateTo({
-            url: '/pages/profitDetail/index?type=agent'
+            url: '/pages/profitDetail/index?type=agent&bossId='+this.data.select_bossId
           })
           // this.setData({
           //   page: 1,
@@ -527,7 +561,7 @@ Page({
         if(e.detail.index == 3){
           // 促销券收益
           wx.navigateTo({
-            url: '/pages/profitDetail/index?type=agent'
+            url: '/pages/profitDetail/index?type=agent&bossId='+this.data.select_bossId
           })
           //查看促销券出售数量(代理人)
           // queryCouponSellList({
@@ -536,6 +570,12 @@ Page({
           // }).then((res)=>{
             
           // })
+        }
+        if(e.detail.index == 4){
+          //搜索商家
+          wx.navigateTo({
+            url: '/pages/search/index?type=agent'
+          })
         }
       }else if(this.data.identity == 'seller'){
         // 销售员
@@ -909,7 +949,8 @@ Page({
           {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
           {icon: '/assets/nav_icon6.png',title: '促销券发行'},
           {icon: '/assets/nav_icon8.png',title: '我的代理人'},
-          {icon: '/assets/nav_icon7.png',title: '促销券收益'}
+          {icon: '/assets/nav_icon7.png',title: '促销券收益'},
+          {icon: '/assets/search.svg',title: '搜索代理人'}
         ]
       }else if(identity == 'agent'){
         // 代理人
@@ -918,7 +959,8 @@ Page({
           {icon: '/assets/nav_icon1.png',title: '促销券收藏'},
           {icon: '/assets/nav_icon6.png',title: '促销券再发行'},
           {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
-          {icon: '/assets/nav_icon7.png',title: '促销券收益'}
+          {icon: '/assets/nav_icon7.png',title: '促销券收益'},
+          {icon: '/assets/search.svg',title: '搜索商家'}
         ]
       }else if(identity == 'seller'){
         // 销售员
@@ -947,21 +989,63 @@ Page({
     })
   },
   selectUserCoupon(){
-    publicFun.getImage(1,false,['album']).then((res)=>{
-      wx.uploadFile({
-        url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
-        filePath: res[0],
-        name: 'file',
-        header: {
-          'Authentication': wx.getStorageSync('token')
-        },
-        success (imgRes){
-          console.log(JSON.parse(imgRes.data).data);
-          wx.navigateTo({
-            url: '/pages/editCoupon/index?id='+JSON.parse(imgRes.data).data,
-          })
-        }
+    console.log(wx.getStorageSync('custom'));
+    // return;
+    if(wx.getStorageSync('custom')){
+      wx.navigateTo({
+        url: '/pages/editCoupon/index?type=custom&id='+wx.getStorageSync('custom'),
       })
+    }else{
+      publicFun.getImage(1,false,['album']).then((res)=>{
+        console.log('----自定义上传促销券----：'+res[0]);
+        wx.showLoading({
+          title: '加载中'
+        })
+        wx.uploadFile({
+          url: 'https://p.3p3.top/applet/file/upload', //仅为示例，非真实的接口地址
+          filePath: res[0],
+          name: 'file',
+          header: {
+            'Authentication': wx.getStorageSync('token')
+          },
+          success (imgRes){
+            console.log('----自定义上传促销券----2：'+JSON.stringify(imgRes.data));
+            wx.hideLoading();
+            wx.navigateTo({
+              url: '/pages/editCoupon/index?type=custom&id='+JSON.parse(imgRes.data).data,
+            })
+          }
+        })
+      })
+    }
+  },
+  delEditCoupon(e){
+    var that = this;
+    let index = e.currentTarget.dataset.index;
+    wx.showModal({
+      title: '提示',
+      content: '确定删除该促销券？',
+      success (res){
+        if(res.confirm){
+          if(that.data.identity == 'boss'){
+            delCoupon({
+              couponId: that.data.coupon_list[index].id
+            }).then((resp)=>{
+              if(resp.code == 200){
+                publicFun.getToast(resp.code);
+                that.setData({
+                  page: 1,
+                  is_list: 1,
+                  status: 1,
+                  is_home: false,
+                  coupon_list: []
+                })
+                that.getCouponList();
+              }
+            })
+          }
+        }
+      }
     })
   },
   delCoupon(e){

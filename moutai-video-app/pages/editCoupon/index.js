@@ -11,6 +11,7 @@ Page({
    */
   data: {
     id: '', //促销券id
+    type: '',
     coupon_name: '',
     price: '',
     face: '',
@@ -32,7 +33,13 @@ Page({
         id: options.id
       })
     }
-    console.log(options.id)
+    if(options.type){
+      this.setData({
+        type: options.type
+      })
+    }
+    console.log(options.id, options.type)
+    this.getEditFinish();
   },
 
   /**
@@ -46,25 +53,13 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    this.getEditFinish();
+    
   },
   getEditFinish(save){
     queryEditCouponInfo({
       imageNum: this.data.id
     }).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          is_edit: res.data!=null?true:false,
-          couponId: res.data!=null?res.data.couponId:'',
-          coupon_name: res.data!=null?res.data.couponName:'',
-          count: res.data!=null?res.data.count:'',
-          price: res.data!=null?res.data.price:'',
-          profit: res.data!=null?res.data.profit:'',
-          date: res.data!=null?res.data.trem:'',
-          date_txt: res.data!=null?res.data.trem:'请选择促销券有效时间',
-          face: res.data!=null?res.data.value:'',
-          video_list: res.data!=null?res.data.codeVideoList:this.data.video_list
-        })
         if(save){
           publicFun.getToast('编辑成功');
           setTimeout(()=>{
@@ -72,6 +67,19 @@ Page({
               delta: 1
             })
           },1500)
+        }else{
+          this.setData({
+            is_edit: res.data!=null?true:false,
+            couponId: res.data!=null?res.data.couponId:'',
+            coupon_name: res.data!=null?res.data.couponName:'',
+            count: res.data!=null?res.data.count:'',
+            price: res.data!=null?res.data.price:'',
+            profit: res.data!=null?res.data.profit:'',
+            date: res.data!=null?res.data.trem:'',
+            date_txt: res.data!=null?res.data.trem:'请选择促销券有效时间',
+            face: res.data!=null?res.data.value:'',
+            video_list: res.data!=null?res.data.codeVideoList:this.data.video_list
+          })
         }
         console.log(this.data.is_edit,this.data.couponId)
       }
@@ -215,6 +223,10 @@ Page({
     }
     editCoupon(data).then((res)=>{
       if(res.code == 200){
+        if(this.data.type == 'custom'){
+          console.log('自定义保存成功：'+res.data);
+          wx.setStorageSync('custom', res.data.imageNum);
+        }
         this.getEditFinish('save');
       }
     })
@@ -267,6 +279,9 @@ Page({
           video_list: video_list
         })
         publicFun.getToast('发行成功');
+        if(this.data.type == 'custom'){
+          wx.removeStorageSync('custom');
+        }
         setTimeout(()=>{
           wx.navigateBack({
             delta: 1

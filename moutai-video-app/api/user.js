@@ -409,6 +409,68 @@ export function delCouponAgent(data) {
     data
   })
 }
-
+//操作记录-成员管理
+export function member_handle_record(data) {
+  return request({
+    url: "/applet/user/member_handle_record",
+    method: "GET",
+    data
+  })
+}
+//操作记录-促销券
+export function coupon_handle_record(data) {
+  return request({
+    url: "/applet/coupon/coupon_handle_record",
+    method: "GET",
+    data
+  })
+}
+//搜索代理人
+export function search_agent(data) {
+  return request({
+    url: "/applet/user/search_agent",
+    method: "GET",
+    data
+  })
+}
+//搜索商家
+export function search_business(data) {
+  return request({
+    url: "/applet/user/search_business",
+    method: "GET",
+    data
+  })
+}
+//邀请代理人
+export function invite_agent(data) {
+  return request({
+    url: "/applet/user/invite_agent",
+    method: "GET",
+    data
+  })
+}
+//查看代理邀请列表
+export function query_agent_invite(data) {
+  return request({
+    url: "/applet/user/query_agent_invite",
+    method: "GET",
+    data
+  })
+}
+//代理邀请管理
+export function agent_invite_manage(data) {
+  return request({
+    url: "/applet/user/agent_invite_manage",
+    method: "GET",
+    data
+  })
+}
+//代理的商家列表
+export function my_business_list() {
+  return request({
+    url: "/applet/user/my_business_list",
+    method: "GET"
+  })
+}
 
 

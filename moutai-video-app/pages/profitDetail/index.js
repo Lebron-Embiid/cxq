@@ -14,6 +14,7 @@ Page({
     activeIndex: 0,
     today: '',
     id: '',
+    bossId: '',
     type: '',
     date: '',
     page: 1,
@@ -33,6 +34,11 @@ Page({
     if(options.index){
       this.setData({
         activeIndex: options.index
+      })
+    }
+    if(options.bossId){
+      this.setData({
+        bossId: options.bossId
       })
     }
 
@@ -67,7 +73,8 @@ Page({
       data = {
         date: this.data.today,
         pageNum: this.data.page,
-        pageSize: 20
+        pageSize: 20,
+        bossId: this.data.bossId
       }
     }
     agent_coupon_profit_info(data).then((res)=>{
@@ -193,9 +200,9 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    let page = this.data.page++;
+    this.data.page++;
     this.setData({
-      page: page
+      page: this.data.page
     })
     
     if(this.data.type == 'boss'){

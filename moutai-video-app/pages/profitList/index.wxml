@@ -37,5 +37,6 @@
         <view class="table_td"><van-button bind:click="toDetail" data-id="{{item.memberId}}" color="#37444A" type="primary" size="small">详情</van-button></view>
       </view>
     </view>
+    <ec-canvas id="mychart" canvas-id="mychart-line" ec="{{ ec }}"></ec-canvas>
   </view>
 </view>

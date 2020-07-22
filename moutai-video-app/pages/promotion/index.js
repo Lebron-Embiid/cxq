@@ -3,6 +3,7 @@ import {
   getInfo,
   appRole,
   shoWEditCouponList,
+  query_editcoupon_list,
   getAgentCouponList,
   queryAllCouponAgentList,
   addCouponAgentList,
@@ -43,6 +44,7 @@ Page({
     id_title: '',
     promotion_list: [],
     coupon_list: [],
+    coupon_custom_list: [],
     issued_list: [],
     is_list: 0, //0: 编辑列表   1：发行列表
     index: '',
@@ -60,7 +62,9 @@ Page({
     myBusinessList: [],
     bus_index: 0,
     select_bossId: '',
-    select_business: ''
+    select_business: '',
+    custom_isNull: true,  //自定义促销券是否为空
+    is_edit_back: false,  //编辑促销券保存返回
   },
 
   /**
@@ -74,7 +78,7 @@ Page({
     //   pageNum: 1,
     //   pageSize: 5
     // }).then(res=>{})
-    
+    that.getCouponCustomList();
     let promotion_list = [
       {icon: '/assets/nav_icon9.png',title: '我当销售员'},
       {icon: '/assets/nav_icon8.png',title: '我做代理人'},
@@ -101,6 +105,17 @@ Page({
     //   is_issue: 0
     // })
     var that = this;
+    console.log(that.data.is_edit_back)
+    if(that.data.is_edit_back == true){
+      that.setData({
+        page: 1,
+        coupon_list: [],
+        coupon_custom_list: []
+      })
+      that.getCouponList();
+      that.getCouponCustomList();
+    }
+
     wx.checkSession({
       success () {
         console.log('登录未过期');
@@ -113,14 +128,6 @@ Page({
           if(ress.code == 200){
             that.setData({
               has_user: ress.data
-            })
-          }
-        })
-
-        queryBusinessImg().then((res)=>{
-          if(res.code == 200){
-            that.setData({
-              shangjia_img: res.data
             })
           }
         })
@@ -161,7 +168,18 @@ Page({
             })
             if(res.data.type == 'agent'){
               that.getMyBusinessList();
+            }else{
+              queryBusinessImg({
+                bossId: ''
+              }).then((res)=>{
+                if(res.code == 200){
+                  that.setData({
+                    shangjia_img: res.data
+                  })
+                }
+              })
             }
+            
             // let identity = this.data.identity;
             // let identity = res.data.type;
             // if(identity == 'boss'){
@@ -302,6 +320,15 @@ Page({
           select_bossId: res.data[0].bossId,
           select_business: res.data[0].businessName
         })
+        queryBusinessImg({
+          bossId: res.data[0].bossId
+        }).then((res)=>{
+          if(res.code == 200){
+            this.setData({
+              shangjia_img: res.data
+            })
+          }
+        })
       }
     })
   },
@@ -328,6 +355,52 @@ Page({
           })
         }
       }
+    })
+  },
+  getCouponCustomList(){
+    // 自定义促销券列表
+    query_editcoupon_list({
+      pageNum: this.data.page,
+      pageSize: 5
+    }).then((res)=>{
+      if(res.code == 200){
+        if(res.data.total != 0){
+          this.setData({
+            custom_isNull: false
+          })
+        }
+        for(let i in res.data.records){
+          let item = res.data.records[i];
+          let base64 = "data:image/png;base64," + item.image;
+          base64src(base64,item.couponId,image=>{
+            this.data.coupon_custom_list.push({
+              id: item.couponId,
+              src: image,
+              couponName: item.couponName,
+              imageNum: item.imageNum
+            })
+            this.setData({
+              coupon_custom_list: this.data.coupon_custom_list
+            })
+          })
+        }
+        // if(this.data.page == 1){
+        //   this.setData({
+        //     coupon_custom_list: res.data.records
+        //   })
+        // }else{
+        //   this.setData({
+        //     coupon_custom_list: this.data.coupon_custom_list.concat(res.data.records)
+        //   })
+        // }
+      }
+    })
+  },
+  lookTemplate(){
+    this.data.custom_isNull = !this.data.custom_isNull;
+    console.log(this.data.custom_isNull);
+    this.setData({
+      custom_isNull: this.data.custom_isNull
     })
   },
   getCouponList1(){
@@ -421,7 +494,7 @@ Page({
   },
   // 编辑列表分页
   getCouponMore(e){
-    if(this.data.page<this.data.pages){
+    if(this.data.page <= this.data.pages){
       this.data.page++;
       this.setData({
         page: this.data.page
@@ -434,19 +507,24 @@ Page({
       }
     }
   },
+  getCouponCustomMore(e){
+    this.data.page++;
+    this.setData({
+      page: this.data.page
+    })
+    this.getCouponCustomList();
+  },
   // 发行列表分页
   getIssuedMore(e){
-    if(this.data.page<this.data.pages){
-      this.data.page++;
-      this.setData({
-        page: this.data.page
-      })
-      if(this.data.identity == 'boss'){
-        this.getIssuedList(this.data.status);
-      }
-      if(this.data.identity == 'agent'){
-        this.getIssuedList1(this.data.status);
-      }
+    this.data.page++;
+    this.setData({
+      page: this.data.page
+    })
+    if(this.data.identity == 'boss'){
+      this.getIssuedList(this.data.status);
+    }
+    if(this.data.identity == 'agent'){
+      this.getIssuedList1(this.data.status);
     }
   },
   // 点击导航触发事件
@@ -463,10 +541,12 @@ Page({
             page: 1,
             is_list: 0,
             is_home: false,
-            coupon_list: []
+            coupon_list: [],
+            coupon_custom_list: []
           })
           console.log(this.data.is_list)
           this.getCouponList();
+          this.getCouponCustomList();
         }
         if(e.detail.index == 1){
           wx.navigateTo({
@@ -854,9 +934,16 @@ Page({
     if(this.data.identity == 'boss'){
       if(this.data.index == 0){
         // 促销券编辑
-        wx.navigateTo({
-          url: '/pages/editCoupon/index?id='+this.data.coupon_list[index].id,
-        })
+        if(this.data.custom_isNull == true){
+          wx.navigateTo({
+            url: '/pages/editCoupon/index?id='+this.data.coupon_list[index].id
+          })
+        }else{
+          wx.navigateTo({
+            url: '/pages/editCoupon/index?id='+this.data.coupon_custom_list[index].imageNum
+          })
+        }
+        
         // let random = Math.floor(Math.random()*99999999);
         // let base64 = "data:image/png;base64," + ress.data;
         // base64src(base64,random,resss=>{
@@ -932,7 +1019,9 @@ Page({
     var back_img = '';
 
     if(is_click){
-      queryBusinessImg().then((res)=>{
+      queryBusinessImg({
+        bossId: this.data.select_bossId
+      }).then((res)=>{
         if(res.code == 200){
           this.setData({
             shangjia_img: res.data
@@ -990,12 +1079,11 @@ Page({
   },
   selectUserCoupon(){
     console.log(wx.getStorageSync('custom'));
-    // return;
-    if(wx.getStorageSync('custom')){
-      wx.navigateTo({
-        url: '/pages/editCoupon/index?type=custom&id='+wx.getStorageSync('custom'),
-      })
-    }else{
+    // if(wx.getStorageSync('custom')){
+    //   wx.navigateTo({
+    //     url: '/pages/editCoupon/index?type=custom&id='+wx.getStorageSync('custom'),
+    //   })
+    // }else{
       publicFun.getImage(1,false,['album']).then((res)=>{
         console.log('----自定义上传促销券----：'+res[0]);
         wx.showLoading({
@@ -1017,7 +1105,7 @@ Page({
           }
         })
       })
-    }
+    // }
   },
   delEditCoupon(e){
     var that = this;

@@ -1,0 +1,17 @@
+ var status = {
+  filterStatus: function(status){
+    var status_txt = '';
+    if(status == '0'){
+      status_txt = '已邀请';
+    }else if(status == '1'){
+      status_txt = '已同意';
+    }else if(status == '2'){
+      status_txt = '已拒绝';
+    }
+    return status_txt;
+  }
+ }
+
+ module.exports = {
+  filterStatus: status.filterStatus
+ }

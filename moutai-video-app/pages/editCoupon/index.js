@@ -63,6 +63,11 @@ Page({
         if(save){
           publicFun.getToast('编辑成功');
           setTimeout(()=>{
+            let pages = getCurrentPages(); // 当前页的数据，
+            let prevPage = pages[pages.length - 2]; // 上一页的数据
+            prevPage.setData({
+              is_edit_back: true // 修改上一页的属性值；
+            })
             wx.navigateBack({
               delta: 1
             })
@@ -225,6 +230,11 @@ Page({
       if(res.code == 200){
         if(this.data.type == 'custom'){
           console.log('自定义保存成功：'+res.data);
+          let pages = getCurrentPages(); // 当前页的数据，
+          let prevPage = pages[pages.length - 2]; // 上一页的数据
+          prevPage.setData({
+            is_edit_back: true // 修改上一页的属性值；
+          })
           wx.setStorageSync('custom', res.data.imageNum);
         }
         this.getEditFinish('save');

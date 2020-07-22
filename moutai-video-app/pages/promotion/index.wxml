@@ -17,7 +17,7 @@
           {{!is_click?'我的商家':'我的主页'}}
         </van-button>
         <van-button wx:if="{{identity != 'seller'}}" bind:click="scanCode" color="#37444A" icon="scan" class="scanCode" type="primary" size="small">
-          扫码播放视频
+          扫码看视频
         </van-button>
 
         <picker class="business_picker" wx:if="{{is_click == true && identity == 'agent' && myBusinessList.length != 0}}" bindchange="bindPickerChange" range-key="businessName" value="{{bus_index}}" range="{{myBusinessList}}">
@@ -34,9 +34,17 @@
         <block wx:if="{{is_list == 0}}">
           <view class="browse_box">
             <van-button bindtap="selectUserCoupon" color="#37444A" type="primary" size="small" class="customize_add" wx:if="{{identity == 'boss'}}">自定义促销券</van-button>
-            <!-- <van-button bindtap="lookTemplate" color="#37444A" type="primary" size="small" class="template_btn" wx:if="{{identity == 'boss'}}">参考模板</van-button> -->
-            <scroll-view bindscrolltolower="getCouponMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
+            <van-button bindtap="lookTemplate" color="#37444A" type="primary" size="small" class="template_btn" wx:if="{{identity == 'boss'}}">{{custom_isNull?'我的促销券':'参考模板'}}</van-button>
+            <!-- 模板促销券列表 -->
+            <scroll-view wx:if="{{custom_isNull == true}}" bindscrolltolower="getCouponMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
               <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_list}}" wx:key="index">
+                <view class="txt">{{item.couponName}}</view>
+                <image src="{{item.src}}" mode="widthFix"></image>
+              </view>
+            </scroll-view>
+            <!-- 自定义促销券列表 -->
+            <scroll-view wx:else bindscrolltolower="getCouponCustomMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
+              <view class="scroll_item" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_custom_list}}" wx:key="index">
                 <view class="txt">{{item.couponName}}</view>
                 <image src="{{item.src}}" mode="widthFix"></image>
               </view>

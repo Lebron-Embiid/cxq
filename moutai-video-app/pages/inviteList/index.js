@@ -60,7 +60,7 @@ Page({
   },
   clickAgree(e){
     agent_invite_manage({
-      memberId: e.currentTarget.dataset.id,
+      bossId: e.currentTarget.dataset.id,
       status: '1'
     }).then((res)=>{
       if(res.code == 200){

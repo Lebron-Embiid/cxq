@@ -2,7 +2,7 @@
 import {
   search_business,
   search_agent,
-  appRole,
+  apply_agent,
   invite_agent
 } from '../../api/user.js'
 Page({
@@ -34,7 +34,6 @@ Page({
   onReady: function () {
 
   },
-
   /**
    * 生命周期函数--监听页面显示
    */
@@ -122,9 +121,10 @@ Page({
       }
     })
   },
-  roleAgent(){
-    appRole({
-      type: 'agent'
+  roleAgent(e){
+    let index = e.currentTarget.dataset.index;
+    apply_agent({
+      businessId: this.data.searchList[index].businessId
     }).then((res)=>{
       if(res.code == 200){
         wx.showToast({

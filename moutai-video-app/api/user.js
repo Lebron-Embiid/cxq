@@ -134,10 +134,11 @@ export function getCode() {
   })
 }
 //商家背景图
-export function queryBusinessImg() {
+export function queryBusinessImg(data) {
   return request({
     url: "/applet/user/queryBusinessImg",
-    method: "GET"
+    method: "GET",
+    data
   })
 }
 //获取用户私钥
@@ -167,6 +168,14 @@ export function shoWEditCouponList() {
 export function queryEditCouponInfo(data) {
   return request({
     url: "/applet/coupon/queryEditCouponInfo",
+    method: "GET",
+    data
+  })
+}
+//查看保存未发行的自定义促销劵
+export function query_editcoupon_list(data) {
+  return request({
+    url: "/applet/coupon/query_editcoupon_list",
     method: "GET",
     data
   })
@@ -378,6 +387,22 @@ export function queryCouponBrowse(data) {
     data
   })
 }
+//删除促销券浏览记录
+export function del_coupon_browse(data) {
+  return request({
+    url: "/applet/coupon/del_coupon_browse",
+    method: "GET",
+    data
+  })
+}
+//删除促销券收藏记录
+export function del_coupon_collect(data) {
+  return request({
+    url: "/applet/coupon/del_coupon_collect",
+    method: "GET",
+    data
+  })
+}
 //身份切换
 export function changeUserType(data) {
   return request({
@@ -470,6 +495,14 @@ export function my_business_list() {
   return request({
     url: "/applet/user/my_business_list",
     method: "GET"
+  })
+}
+//申请成为代理人
+export function apply_agent(data) {
+  return request({
+    url: "/applet/user/apply_agent",
+    method: "GET",
+    data
   })
 }
 

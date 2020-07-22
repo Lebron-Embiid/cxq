@@ -40,7 +40,7 @@ Page({
   getMemberRecord(){
     member_handle_record({
       pageNum: this.data.page,
-      pageSize: 5
+      pageSize: 20
     }).then((res)=>{
       if(res.code == 200){
         this.setData({
@@ -52,7 +52,7 @@ Page({
   getCouponRecord(){
     coupon_handle_record({
       pageNum: this.data.page,
-      pageSize: 5
+      pageSize: 20
     }).then((res)=>{
       if(res.code == 200){
         this.setData({

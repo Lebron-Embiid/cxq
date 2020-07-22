@@ -11,7 +11,9 @@ import {
   querySellCouponList,
   queryCouponUseList,
   querySellCouponListBySeller,
-  queryUseCouponListBySeller
+  queryUseCouponListBySeller,
+  del_coupon_browse,
+  del_coupon_collect
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 Page({
@@ -39,8 +41,12 @@ Page({
     code_img: [],
     key: '',
     page: 1,
+    page1: 1,
+    page2: 1,
+    page3: 1,
     pages: 1,
-    is_pass: 0
+    is_pass: 0,
+    is_look_sell: false, //销售员是否查看销售记录
   },
 
   /**
@@ -95,7 +101,11 @@ Page({
           nav_list = ['浏览促销券','收藏促销券','已购促销券'];
         }
         if(res.data.type == 'seller'){
-          nav_list = ['已出售促销券','已验收促销券'];
+          if(this.data.is_look_sell == true){
+            nav_list = ['已出售促销券','已验收促销券'];
+          }else{
+            nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+          }
         }
         if(res.data.type == 'agent'){
           nav_list = ['浏览促销券','收藏促销券','已购促销券'];
@@ -109,14 +119,31 @@ Page({
           name: res.data.nickname,
           phone: res.data.phone,
           identity: res.data.type,
-          look_list: []
+          look_list: [],
+          collect_list: [],
+          coupon_list: [],
+          sellerList1: [],
+          sellerList2: [],
+          page: 1,
+          page1: 1,
+          page2: 1,
+          page3: 1
         })
 
         if(this.data.identity != 'seller'){
           this.getLookList();
+          this.getCollectList();
+          this.getBuyList();
         }
         if(this.data.identity == 'seller'){
-          this.getBuyList();
+          if(this.data.is_look_sell == true){
+            this.getSellList();
+            this.getConsumeList();
+          }else{
+            this.getLookList();
+            this.getCollectList();
+            this.getBuyList();
+          }
         }
       }
     }).catch(err=>{
@@ -153,7 +180,7 @@ Page({
   getLookList() {
     //浏览列表
     queryCouponBrowse({
-      pageNum: this.data.page,
+      pageNum: this.data.page1,
       pageSize: 5
     }).then(lookres=>{
       if(lookres.code == 200){
@@ -179,7 +206,7 @@ Page({
   getCollectList() {
     //收藏列表
     queryCouponCollectList({
-      pageNum: this.data.page,
+      pageNum: this.data.page2,
       pageSize: 5
     }).then(res=>{
       if(res.code == 200){
@@ -204,9 +231,9 @@ Page({
   },
   getBuyList(){
     // == 'consumer' || this.data.identity == '' || this.data.identity == null
-    if(this.data.identity != 'seller'){
+    // if(this.data.identity != 'seller'){
       queryMyCouponList({
-        pageNum: this.data.page,
+        pageNum: this.data.page3,
         pageSize: 5
       }).then(buyres=>{
         if(buyres.code == 200){
@@ -240,21 +267,31 @@ Page({
           // })
         }
       })
-    }
-    if(this.data.identity == 'seller'){
-      querySellCouponListBySeller({
-        pageNum: this.data.page,
-        pageSize: 10
-      }).then((res)=>{
-        console.log('已出售促销券返回的json数据：'+JSON.stringify(res.data))
-        if(res.code == 200){
+    // }
+    // if(this.data.identity == 'seller'){
+      
+    // }
+  },
+  getSellList(){
+    querySellCouponListBySeller({
+      pageNum: this.data.page,
+      pageSize: 10
+    }).then((res)=>{
+      console.log('已出售促销券返回的json数据：'+JSON.stringify(res.data))
+      if(res.code == 200){
+        if(this.data.page == 1){
           this.setData({
             sellerList1: res.data.records,
             pages: res.data.pages
           })
+        }else{
+          this.setData({
+            sellerList1: this.data.sellerList1.concat(res.data.records),
+            pages: res.data.pages
+          })
         }
-      })
-    }
+      }
+    })
   },
   getConsumeList(){
     queryUseCouponListBySeller({
@@ -263,50 +300,31 @@ Page({
     }).then((res)=>{
       console.log('已验收促销券返回的json数据：'+JSON.stringify(res.data))
       if(res.code == 200){
-        this.setData({
-          sellerList2: res.data.records,
-          pages: res.data.pages
-        })
-      }
-    })
-  },
-  getSellerListMore1(){
-    if(this.data.page<this.data.pages){
-      this.data.page++;
-      this.setData({
-        page: this.data.page
-      })
-      querySellCouponListBySeller({
-        pageNum: this.data.page,
-        pageSize: 10
-      }).then((res)=>{
-        if(res.code == 200){
+        if(this.data.page == 1){
           this.setData({
-            sellerList1: this.data.sellerList1.concat(res.data.records),
+            sellerList2: res.data.records,
             pages: res.data.pages
           })
-        }
-      })
-    }
-  },
-  getSellerListMore2(){
-    if(this.data.page<this.data.pages){
-      this.data.page++;
-      this.setData({
-        page: this.data.page
-      })
-      queryUseCouponListBySeller({
-        pageNum: this.data.page,
-        pageSize: 10
-      }).then((res)=>{
-        if(res.code == 200){
+        }else{
           this.setData({
             sellerList2: this.data.sellerList2.concat(res.data.records),
             pages: res.data.pages
           })
         }
-      })
-    }
+      }
+    })
+  },
+  getSellerListMore1(){
+    this.data.page++;
+    this.setData({
+      page: this.data.page
+    })
+  },
+  getSellerListMore2(){
+    this.data.page++;
+    this.setData({
+      page: this.data.page
+    })
   },
   userInfo() {
     wx.getUserInfo({
@@ -324,75 +342,156 @@ Page({
   },
   clickNav(e){
     let index = e.currentTarget.dataset.index;
-    console.log(index,this.data.identity)
+    console.log(index,this.data.identity);
     this.setData({
       nav_active: index,
-      page: 1,
-      look_list: [],
-      coupon_list: [],
-      collect_list: []
+      // page: 1,
+      // look_list: [],
+      // coupon_list: [],
+      // collect_list: [],
+      // sellerList1: [],
+      // sellerList2: []
     })
-    if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
-      if(index == 0){
-        this.getLookList();
-      }else if(index == 1){
-        this.getCollectList();
-      }else{
-        this.getBuyList();
-      }
-    }
-    if(this.data.identity == 'seller'){
-      if(index == 0){
-        this.getBuyList();//已出售促销券
-      }else{
-        this.getConsumeList();//已验收促销券
-      }
-    }
-    if(this.data.identity == 'agent'){
-      if(index == 0){
-        this.getLookList();
-      }else if(index == 1){
-        this.getCollectList();
-      }else{
-        this.getBuyList();
-      }
-    }
-    if(this.data.identity == 'boss'){
-      if(index == 0){
-        this.getLookList();
-      }else if(index == 1){
-        this.getCollectList();
-      }else{
-        this.getBuyList();
-      }
-    }
+    // if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
+    //   if(index == 0){
+    //     this.getLookList();
+    //   }else if(index == 1){
+    //     this.getCollectList();
+    //   }else{
+    //     this.getBuyList();
+    //   }
+    // }
+    // if(this.data.identity == 'seller'){
+    //   if(this.data.is_look_sell == true){
+    //     if(index == 0){
+    //       this.getSellList();//已出售促销券
+    //     }else{
+    //       this.getConsumeList();//已验收促销券
+    //     }
+    //   }else{
+    //     if(index == 0){
+    //       this.getLookList();
+    //     }else if(index == 1){
+    //       this.getCollectList();
+    //     }else{
+    //       this.getBuyList();
+    //     }
+    //   }
+    // }
+    // if(this.data.identity == 'agent'){
+    //   if(index == 0){
+    //     this.getLookList();
+    //   }else if(index == 1){
+    //     this.getCollectList();
+    //   }else{
+    //     this.getBuyList();
+    //   }
+    // }
+    // if(this.data.identity == 'boss'){
+    //   if(index == 0){
+    //     this.getLookList();
+    //   }else if(index == 1){
+    //     this.getCollectList();
+    //   }else{
+    //     this.getBuyList();
+    //   }
+    // }
   },
-  getLookMore(){
-    if(this.data.page<this.data.pages){
-      this.data.page++;
-      this.setData({
-        page: this.data.page
-      })
+  toLookSellList(){
+    this.data.is_look_sell = !this.data.is_look_sell;
+    if(this.data.is_look_sell == true){
+      this.data.nav_list = ['已出售促销券','已验收促销券'];
+    }else{
+      this.data.nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+    }
+    this.setData({
+      nav_active: 0,
+      look_list: [],
+      collect_list: [],
+      coupon_list: [],
+      sellerList1: [],
+      sellerList2: [],
+      page: 1,
+      nav_list: this.data.nav_list,
+      is_look_sell: this.data.is_look_sell
+    })
+    if(this.data.is_look_sell == true){
+      this.getSellList();
+      this.getConsumeList();
+    }else{
       this.getLookList();
-    }
-  },
-  getCouponMore(){
-    if(this.data.page<this.data.pages){
-      this.data.page++;
-      this.setData({
-        page: this.data.page
-      })
+      this.getCollectList();
       this.getBuyList();
     }
   },
+  getLookMore(){
+    this.data.page1++;
+    this.setData({
+      page1: this.data.page1
+    })
+    this.getLookList();
+  },
   getCollectMore(){
-    if(this.data.page<this.data.pages){
-      this.data.page++;
-      this.setData({
-        page: this.data.page
-      })
-      this.getCollectList();
-    }
+    this.data.page2++;
+    this.setData({
+      page2: this.data.page2
+    })
+    this.getCollectList();
+  },
+  getCouponMore(){
+    this.data.page3++;
+    this.setData({
+      page3: this.data.page3
+    })
+    this.getBuyList();
+  },
+  delCoupon(e){
+    var that = this;
+    let index = e.currentTarget.dataset.index;
+    wx.showModal({
+      title: '提示',
+      content: '确定删除该促销券？',
+      success (res){
+        if(res.confirm){
+          del_coupon_browse({
+            certId: that.data.look_list[index].certId,
+            couponId: that.data.look_list[index].couponId
+          }).then((resp)=>{
+            if(resp.code == 200){
+              that.setData({
+                page: 1,
+                look_list: []
+              })
+              that.getLookList();
+            }
+          })
+        }
+      }
+    })
+  },
+  delCollectCoupon(e){
+    var that = this;
+    let index = e.currentTarget.dataset.index;
+    wx.showModal({
+      title: '提示',
+      content: '确定删除该促销券？',
+      success (res){
+        if(res.confirm){
+          del_coupon_collect({
+            certId: that.data.collect_list[index].certId,
+            couponId: that.data.collect_list[index].couponId
+          }).then((resp)=>{
+            if(resp.code == 200){
+              that.setData({
+                page: 1,
+                collect_list: []
+              })
+              that.getCollectList();
+            }
+          })
+        }
+      }
+    })
   },
   selectLook(e){
     let index = e.currentTarget.dataset.index;
@@ -411,6 +510,11 @@ Page({
           title: '收藏成功！',
           icon: 'none'
         })
+        this.setData({
+          page2: 1,
+          collect_list: []
+        })
+        this.getCollectList();
       }
     })
   },

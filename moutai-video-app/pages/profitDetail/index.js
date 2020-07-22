@@ -138,7 +138,7 @@ Page({
       today: e.detail.value
     })
     if(this.data.type == 'boss'){
-      // this.getAgentDetail();
+      this.getAgentDetail();
     }else if(this.data.type == 'agent'){
       this.getAgentDetail();
     }else{
@@ -155,10 +155,16 @@ Page({
       page: 1,
       activeIndex: e.currentTarget.dataset.index
     })
-    if(this.data.activeIndex == 0){
-      this.getSellerProfitDetail();
+    if(this.data.type == 'boss'){
+      this.getAgentDetail();
+    }else if(this.data.type == 'agent'){
+      this.getAgentDetail();
     }else{
-      this.getSellerDiscountDetail();
+      if(this.data.activeIndex == 0){
+        this.getSellerProfitDetail();
+      }else{
+        this.getSellerDiscountDetail();
+      }
     }
   },
   /**

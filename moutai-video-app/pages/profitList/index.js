@@ -2,7 +2,8 @@
 import * as echarts from '../../components/ec-canvas/echarts';
 import {
   agent_coupon_profit_list,
-  seller_coupon_profit_list
+  seller_coupon_profit_list,
+  coupon_sell_trend_chart
 } from '../../api/user.js'
 
 var Chart = null;
@@ -17,6 +18,7 @@ Page({
     tab_list: ["代理人","销售员"],
     activeIndex: 0,
     list: [],
+    dataList: [],
     page: 1,
     ec: {
       lazyLoad: true // 延迟加载
@@ -76,48 +78,65 @@ Page({
 
   },
   getData(){
-    dataList = [{
-      name: 'A',
-      type: 'line',
-      smooth: true,
-      data: [18, 36, 65, 30, 78, 40, 33]
-    }, {
-      name: 'B',
-      type: 'line',
-      smooth: true,
-      data: [12, 50, 51, 35, 70, 30, 20]
-    },{
-      name: 'C',
-      type: 'line',
-      smooth: true,
-      data: [10, 30, 31, 50, 40, 20, 10]
-    }, {
-      name: 'D',
-      type: 'line',
-      smooth: true,
-      data: [10, 30, 31, 50, 40, 20, 10]
-    }, {
-      name: 'E',
-      type: 'line',
-      smooth: true,
-      data: [10, 30, 31, 50, 40, 20, 10]
-    }, {
-      name: 'F',
-      type: 'line',
-      smooth: true,
-      data: [10, 30, 31, 50, 40, 20, 10]
-    }, {
-      name: 'G',
-      type: 'line',
-      smooth: true,
-      data: [10, 30, 31, 50, 40, 20, 10]
-    }, {
-      name: 'H',
-      type: 'line',
-      smooth: true,
-      data: [10, 30, 31, 50, 40, 20, 10]
-    }]
-    this.init_echarts();
+    coupon_sell_trend_chart().then((res)=>{
+      if(res.code == 200){
+        for(let i in res.data){
+          this.data.dataList.push({
+            name: res.data[i].couponName,
+            type: 'line',
+            smooth: true,
+            data: res.data[i].data
+          })
+        }
+        this.setData({
+          dataList: this.data.dataList
+        })
+        console.log(this.data.dataList)
+        this.init_echarts();
+      }
+    })
+    // dataList = [{
+    //   name: 'A',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [18, 36, 65, 30, 78, 40, 33]
+    // }, {
+    //   name: 'B',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [12, 50, 51, 35, 70, 30, 20]
+    // },{
+    //   name: 'C',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [10, 30, 31, 50, 40, 20, 10]
+    // }, {
+    //   name: 'D',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [10, 30, 31, 50, 40, 20, 10]
+    // }, {
+    //   name: 'E',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [10, 30, 31, 50, 40, 20, 10]
+    // }, {
+    //   name: 'F',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [10, 30, 31, 50, 40, 20, 10]
+    // }, {
+    //   name: 'G',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [10, 30, 31, 50, 40, 20, 10]
+    // }, {
+    //   name: 'H',
+    //   type: 'line',
+    //   smooth: true,
+    //   data: [10, 30, 31, 50, 40, 20, 10]
+    // }]
+    
     // if (!Chart){
     //   this.init_echarts(); //初始化图表
     // }else{
@@ -146,8 +165,8 @@ Page({
     let last7 = [];
     for(let i=0;i<=6;i++){
       this.getLastSevenDay(i);
-      // 获取最近7天的日期
-      last7.unshift(this.getLastSevenDay(i).M_before+'月'+this.getLastSevenDay(i).D_before+'日');
+      // 获取最近7天的日期  this.getLastSevenDay(i).M_before+'月'+
+      last7.unshift(this.getLastSevenDay(i).D_before+'日');
     }
     console.log(last7)
 
@@ -157,12 +176,12 @@ Page({
         left: 'center'
       },
       // color: ["#37A2DA", "#67E0E3", "#9FE6B8"],
-      legend: {
-        data: ['A', 'B', 'C','D', 'E', 'F','G', 'H', 'I'],
-        bottom: 0,
-        left: 'center',
-        z: 100
-      },
+      // legend: {
+      //   data: ['A', 'B', 'C','D', 'E', 'F','G', 'H', 'I'],
+      //   bottom: 0,
+      //   left: 'center',
+      //   z: 100
+      // },
       grid: {
         containLabel: true
       },
@@ -186,7 +205,7 @@ Page({
         }
         // show: false
       },
-      series: dataList
+      series: this.data.dataList
     };
     return option;
   },

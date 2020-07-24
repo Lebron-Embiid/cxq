@@ -505,5 +505,12 @@ export function apply_agent(data) {
     data
   })
 }
+//趋势图
+export function coupon_sell_trend_chart() {
+  return request({
+    url: "/applet/coupon/coupon_sell_trend_chart",
+    method: "GET"
+  })
+}
 
 

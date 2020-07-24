@@ -364,7 +364,7 @@ Page({
       pageSize: 5
     }).then((res)=>{
       if(res.code == 200){
-        if(res.data.total != 0){
+        if(res.data != null){
           this.setData({
             custom_isNull: false
           })

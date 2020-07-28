@@ -33,7 +33,7 @@ Page({
         applicationMemberList({
           data: res.data,
           pageNum: this.data.page,
-          pageSize: 10,
+          pageSize: 20,
           type: 'seller'
         }).then(ress=>{
           if(ress.code == 200){
@@ -49,7 +49,7 @@ Page({
   getSeller(){
     queryMemberList({
       pageNum: this.data.page,
-      pageSize: 10,
+      pageSize: 20,
       type: 'seller'
     }).then(res=>{
       if(res.code == 200){
@@ -153,10 +153,9 @@ Page({
         let index = e.currentTarget.dataset.index;
         this.data.list[index].status = '通过';
         this.setData({
-          list: [],
-          page: 1
+          list: this.data.list
         })
-        this.getApply();
+        // this.getApply();
       }
     })
   },
@@ -174,15 +173,15 @@ Page({
         let index = e.currentTarget.dataset.index;
         this.data.list[index].status = '未通过';
         this.setData({
-          list: [],
-          page: 1
+          list: this.data.list
         })
-        this.getApply();
+        // this.getApply();
       }
     })
   },
   clickDelete(e){
     let that = this;
+    let index = e.currentTarget.dataset.index;
     wx.showModal({
       title: '提示',
       content: '确认删除该成员?',
@@ -198,13 +197,10 @@ Page({
                 title: '已删除',
                 icon: 'none'
               })
+              that.data.list.splice(index,1);
               that.setData({
-                list: [],
-                page: 1
+                list: that.data.list
               })
-              setTimeout(()=>{
-                that.getSeller();
-              },1500)
             }
           })
         }

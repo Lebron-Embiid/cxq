@@ -14,8 +14,10 @@
     扫码播放视频
   </van-button>  -->
   <van-cell-group>
+    <van-cell is-link title="我的二维码" bindtap="showUserCode" />
     <van-cell wx:if="{{identity == 'boss'}}" is-link title="修改资料" bindtap="changeMyInfo" />
     <van-cell wx:if="{{identity == 'boss'}}" is-link title="操作记录" bindtap="toRecordPage" />
+    <van-cell wx:if="{{identity == 'boss'}}" is-link title="店铺转让" bindtap="toShopTransfer" />
     <van-cell wx:if="{{identity == 'agent'}}" is-link title="邀请列表" bindtap="toInviteAgent" />
     <van-cell wx:if="{{identity == 'seller'}}" is-link title="{{is_look_sell==true?'浏览记录':'销售记录'}}" bindtap="toLookSellList" />
     <!-- <van-cell is-link title="我的二维码" bindtap="previewCode" /> -->
@@ -77,6 +79,9 @@
       </view>
     </scroll-view>
   </block>
+  <view class="{{is_showCode == true?'user_code_box show':'user_code_box'}}" bindtap="hideUserCode">
+    <image src="{{user_code}}" mode="widthFix"></image>
+  </view>
   <!-- 我想 -->
   <!-- <view class="nav_content" wx:if="{{nav_active == 3 && identity == 'consumer' || identity == '' || identity == null}}"> -->
     <!-- <view class="promotion_list_box">
@@ -87,7 +92,6 @@
         </view>
       </view>
     </view> -->
-    <!-- <image src="{{code_img[0]}}" mode="widthFix"></image> -->
   <!-- </view> -->
   <!-- <view class="mine" catchtap="toPromotion"><image src="../../assets/mine.png" mode="widthFix"></image></view> -->
 </view>

@@ -78,7 +78,7 @@ Page({
     //   pageNum: 1,
     //   pageSize: 5
     // }).then(res=>{})
-    that.getCouponCustomList();
+    
     let promotion_list = [
       {icon: '/assets/nav_icon9.png',title: '我当销售员'},
       {icon: '/assets/nav_icon8.png',title: '我做代理人'},
@@ -364,9 +364,13 @@ Page({
       pageSize: 5
     }).then((res)=>{
       if(res.code == 200){
-        if(res.data != null){
+        if(res.data.total != 0){
           this.setData({
             custom_isNull: false
+          })
+        }else{
+          this.setData({
+            custom_isNull: true
           })
         }
         for(let i in res.data.records){
@@ -1150,14 +1154,14 @@ Page({
             }).then((resp)=>{
               if(resp.code == 200){
                 publicFun.getToast(resp.code);
+                that.data.issued_list.splice(index,1);
                 that.setData({
-                  page: 1,
                   is_list: 1,
                   status: 1,
                   is_home: false,
-                  issued_list: []
+                  issued_list: that.data.issued_list
                 })
-                that.getIssuedList(1);
+                // that.getIssuedList(1);
               }
             })
           }
@@ -1167,14 +1171,14 @@ Page({
             }).then((resp)=>{
               if(resp.code == 200){
                 publicFun.getToast(resp.code);
+                that.data.issued_list.splice(index,1);
                 that.setData({
-                  page: 1,
                   is_list: 1,
                   status: 1,
                   is_home: false,
-                  issued_list: []
+                  issued_list: that.data.issued_list
                 })
-                that.getIssuedList1(1);
+                // that.getIssuedList1(1);
               }
             })
           }

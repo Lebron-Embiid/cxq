@@ -372,11 +372,10 @@ export function uploadFile(data) {
   })
 }
 //用户身份二维码
-export function showUserQRCode(data) {
+export function showUserQRCode() {
   return request({
     url: "/applet/user/showUserQRCode",
-    method: "POST",
-    data
+    method: "POST"
   })
 }
 //促销券浏览
@@ -512,5 +511,38 @@ export function coupon_sell_trend_chart() {
     method: "GET"
   })
 }
+//店铺转让
+export function business_tran(data) {
+  return request({
+    url: "/applet/user/business_tran",
+    method: "GET",
+    data
+  })
+}
+//店铺转让信息
+export function business_tran_info(data) {
+  return request({
+    url: "/applet/user/business_tran_info",
+    method: "GET",
+    data
+  })
+}
+//[店铺转让]老板状态修改
+export function business_tran_boss_status(data) {
+  return request({
+    url: "/applet/user/business_tran_boss_status",
+    method: "GET",
+    data
+  })
+}
+//[店铺转让]接收人状态修改
+export function business_tran_receiver_status(data) {
+  return request({
+    url: "/applet/user/business_tran_receiver_status",
+    method: "GET",
+    data
+  })
+}
+
 
 

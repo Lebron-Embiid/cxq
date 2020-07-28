@@ -3,6 +3,7 @@ import {
   appRole,
   getCode,
   getPrivateKey,
+  showUserQRCode,
   couponCollect,
   queryCouponCollectList,
   queryMyCouponList,
@@ -16,6 +17,7 @@ import {
   del_coupon_collect
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
+import publicFun from '../../utils/public.js'
 Page({
 
   /**
@@ -26,6 +28,8 @@ Page({
     name: '',
     phone: '',
     identity: '',//boss agent seller 
+    user_code: '',
+    is_showCode: false,
     nav_list: ['浏览促销券','收藏促销券','已购销售券'],//,'我想'
     nav_active: 0,
     look_list: [],
@@ -56,18 +60,16 @@ Page({
     console.log(wx.getStorageSync('token'));
     this.userInfo();
 
-    // this.getLookList();
-  },
-  onShow() {
-    // queryBusinessInfo().then((res)=>{
-    //   if(res.code == 200){
-    //     if(res.data.status == '待审批'){
-    //       this.setData({
-    //         is_pass: 1
-    //       })
-    //     }
-    //   }
-    // })
+    // 用户二维码
+    showUserQRCode().then((res)=>{
+      const base64ImgUrl = "data:image/png;base64," + res.data;
+      base64src(base64ImgUrl,'userCode',ress=>{
+        this.setData({
+          user_code: ress
+        })
+      })
+    })
+
     var that = this;
     //获取用户信息
     wx.checkSession({
@@ -89,6 +91,19 @@ Page({
         // session_key 已经失效，需要重新执行登录流程
       }
     })
+    // this.getLookList();
+  },
+  onShow() {
+    // queryBusinessInfo().then((res)=>{
+    //   if(res.code == 200){
+    //     if(res.data.status == '待审批'){
+    //       this.setData({
+    //         is_pass: 1
+    //       })
+    //     }
+    //   }
+    // })
+    
   },
   getUserInfo(){
     getInfo().then(res=>{
@@ -146,8 +161,6 @@ Page({
           }
         }
       }
-    }).catch(err=>{
-      
     })
   },
   getUserLogin(){
@@ -181,7 +194,7 @@ Page({
     //浏览列表
     queryCouponBrowse({
       pageNum: this.data.page1,
-      pageSize: 5
+      pageSize: 3
     }).then(lookres=>{
       if(lookres.code == 200){
         for(let i in lookres.data.records){
@@ -207,7 +220,7 @@ Page({
     //收藏列表
     queryCouponCollectList({
       pageNum: this.data.page2,
-      pageSize: 5
+      pageSize: 3
     }).then(res=>{
       if(res.code == 200){
         for(let i in res.data.records){
@@ -234,10 +247,10 @@ Page({
     // if(this.data.identity != 'seller'){
       queryMyCouponList({
         pageNum: this.data.page3,
-        pageSize: 5
+        pageSize: 3
       }).then(buyres=>{
         if(buyres.code == 200){
-          console.log('已购促销券返回的json数据：'+JSON.stringify(buyres.data))
+          // console.log('已购促销券返回的json数据：'+JSON.stringify(buyres.data))
           for(let i in buyres.data.records){
             let item = buyres.data.records[i];
             let base64 = "data:image/png;base64," + item.rqcode;
@@ -458,11 +471,11 @@ Page({
             couponId: that.data.look_list[index].couponId
           }).then((resp)=>{
             if(resp.code == 200){
+              that.data.look_list.splice(index,1);
               that.setData({
-                page: 1,
-                look_list: []
+                look_list: that.data.look_list
               })
-              that.getLookList();
+              // that.getLookList();
             }
           })
         }
@@ -482,11 +495,11 @@ Page({
             couponId: that.data.collect_list[index].couponId
           }).then((resp)=>{
             if(resp.code == 200){
+              that.data.collect_list.splice(index,1);
               that.setData({
-                page: 1,
-                collect_list: []
+                collect_list: that.data.collect_list
               })
-              that.getCollectList();
+              // that.getCollectList();
             }
           })
         }
@@ -595,6 +608,21 @@ Page({
   toInviteAgent(){
     wx.navigateTo({
       url: '/pages/inviteList/index',
+    })
+  },
+  showUserCode(){
+    this.setData({
+      is_showCode: true
+    })
+  },
+  hideUserCode(){
+    this.setData({
+      is_showCode: false
+    })
+  },
+  toShopTransfer(){
+    wx.navigateTo({
+      url: '/pages/shopTransfer/index?type=' + this.data.identity
     })
   }
 })

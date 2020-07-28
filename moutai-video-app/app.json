@@ -3,6 +3,7 @@
     "pages/promotion/index",
     "pages/userInfo/index",
     "pages/search/index",
+    "pages/shopTransfer/index",
     "pages/recordList/index",
     "pages/inviteList/index",
     "pages/editCoupon/index",

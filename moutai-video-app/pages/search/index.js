@@ -118,6 +118,10 @@ Page({
           title: '请求成功',
           icon: 'none'
         })
+        this.data.searchList[index].status = '0';
+        this.setData({
+          searchList: this.data.searchList
+        })
       }
     })
   },

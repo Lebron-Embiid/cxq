@@ -19,7 +19,16 @@ button.button-hover{
   justify-content: center;
   align-items: center;
   margin-bottom: 10rpx;
+  position: relative;
   /* margin-top: 64px; */
+}
+.home_icon{
+  width: 44rpx;
+  height: 44rpx;
+  position: absolute;
+  left: 15rpx;
+  top: 15rpx;
+  z-index: 5;
 }
 
 .user {

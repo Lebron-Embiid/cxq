@@ -12,7 +12,7 @@
     </view>
     <view class="form_item">
       <text class="form_txt">统一社会信用代码</text>
-      <view class="form_content"><input placeholder="请输入统一社会信用代码" type="number" value="{{person_code}}" bindinput="getPersonCode"></input></view>
+      <view class="form_content"><input placeholder="请输入统一社会信用代码" type="text" value="{{person_code}}" bindinput="getPersonCode"></input></view>
     </view>
     <view class="form_item">
       <text class="form_txt">执照</text>

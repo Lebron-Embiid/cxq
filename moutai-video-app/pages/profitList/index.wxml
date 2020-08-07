@@ -11,6 +11,10 @@
     <view class="nav_tab_box" wx:if="{{type == 'boss'}}">
       <view class="nav_item {{activeIndex==index?'active':''}}" bindtap="clickNav" data-index="{{index}}" wx:for="{{tab_list}}" wx:key="index">{{item}}</view>
     </view>
+
+    <view class="chart_btn" bindtap="selectDayOrMonth"><text class="{{selectDayMonth?'active':''}}">天</text> / <text class="{{!selectDayMonth?'active':''}}">月</text></view>
+    <ec-canvas id="mychart" canvas-id="mychart-line" ec="{{ ec }}"></ec-canvas>
+    
     <view class="table_box" wx:if="{{activeIndex==0}}">
       <view class="table_item">
         <view class="table_th">代理人</view>
@@ -37,6 +41,5 @@
         <view class="table_td"><van-button bind:click="toDetail" data-id="{{item.memberId}}" color="#37444A" type="primary" size="small">详情</van-button></view>
       </view>
     </view>
-    <ec-canvas id="mychart" canvas-id="mychart-line" ec="{{ ec }}"></ec-canvas>
   </view>
 </view>

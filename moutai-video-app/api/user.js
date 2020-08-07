@@ -504,10 +504,45 @@ export function apply_agent(data) {
     data
   })
 }
-//趋势图
+//趋势图:最近七天每天每种劵出售[数量])
 export function coupon_sell_trend_chart() {
   return request({
     url: "/applet/coupon/coupon_sell_trend_chart",
+    method: "GET"
+  })
+}
+//趋势图:最近七天每天销售劵总[收益])
+export function coupon_profit_trend_chart() {
+  return request({
+    url: "/applet/coupon/coupon_profit_trend_chart",
+    method: "GET"
+  })
+}
+//趋势图:最近七天每天销售劵总[折让])
+export function coupon_discount_trend_chart() {
+  return request({
+    url: "/applet/coupon/coupon_discount_trend_chart",
+    method: "GET"
+  })
+}
+//趋势图:最近一年每月销售劵总[收益])
+export function coupon_profit_trend_chart_month() {
+  return request({
+    url: "/applet/coupon/coupon_profit_trend_chart_month",
+    method: "GET"
+  })
+}
+//趋势图:最近一年每月销售劵总[折让])
+export function coupon_discount_trend_chart_month() {
+  return request({
+    url: "/applet/coupon/coupon_discount_trend_chart_month",
+    method: "GET"
+  })
+}
+//趋势图:最近一年每月促销劵出售[数量])
+export function coupon_sell_trend_chart_month() {
+  return request({
+    url: "/applet/coupon/coupon_sell_trend_chart_month",
     method: "GET"
   })
 }
@@ -543,6 +578,39 @@ export function business_tran_receiver_status(data) {
     data
   })
 }
+//[删除]购买的优惠券
+export function del_coupon_purchased(data) {
+  return request({
+    url: "/applet/coupon/del_coupon_purchased",
+    method: "GET",
+    data
+  })
+}
+//查看无用(已过期||使用次数为0)的已购促销券
+export function query_useless_coupon_list(data) {
+  return request({
+    url: "/applet/coupon/query_useless_coupon_list",
+    method: "GET",
+    data
+  })
+}
+//查询的促销劵信息
+export function query_coupon_info(data) {
+  return request({
+    url: "/applet/coupon/query_coupon_info",
+    method: "GET",
+    data
+  })
+}
+//[店铺转让]记录
+export function business_tran_record(data) {
+  return request({
+    url: "/applet/user/business_tran_record",
+    method: "GET",
+    data
+  })
+}
+
 
 
 

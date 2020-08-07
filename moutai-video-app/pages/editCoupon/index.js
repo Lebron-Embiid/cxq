@@ -18,6 +18,7 @@ Page({
     count: '',
     date: '',
     profit: '',
+    frequence: '',
     date_txt: '请选择促销券有效时间',
     is_edit: false,
     couponId: '',
@@ -80,6 +81,7 @@ Page({
             count: res.data!=null?res.data.count:'',
             price: res.data!=null?res.data.price:'',
             profit: res.data!=null?res.data.profit:'',
+            frequence: res.data!=null?res.data.frequence:'',
             date: res.data!=null?res.data.trem:'',
             date_txt: res.data!=null?res.data.trem:'请选择促销券有效时间',
             face: res.data!=null?res.data.value:'',
@@ -149,6 +151,11 @@ Page({
       profit: e.detail.value
     })
   },
+  getFrequence(e){
+    this.setData({
+      frequence: e.detail.value
+    })
+  },
   bindDateChange: function(e) {
     console.log('picker发送选择改变，携带值为', e.detail.value)
     this.setData({
@@ -208,6 +215,7 @@ Page({
       trem: this.data.date,
       count: this.data.count,
       profit: this.data.profit,
+      frequence: this.data.frequence,
       value: this.data.face,
       jsonList: JSON.stringify(this.data.video_list),
       status: '0'
@@ -221,6 +229,7 @@ Page({
         trem: this.data.date,
         count: this.data.count,
         profit: this.data.profit,
+        frequence: this.data.frequence,
         value: this.data.face,
         jsonList: JSON.stringify(this.data.video_list),
         status: '0'
@@ -257,6 +266,7 @@ Page({
       trem: this.data.date,
       count: this.data.count,
       profit: this.data.profit,
+      frequence: this.data.frequence,
       value: this.data.face,
       jsonList: JSON.stringify(this.data.video_list),
       status: '1'
@@ -270,6 +280,7 @@ Page({
         trem: this.data.date,
         count: this.data.count,
         profit: this.data.profit,
+        frequence: this.data.frequence,
         value: this.data.face,
         jsonList: JSON.stringify(this.data.video_list),
         status: '1'
@@ -285,6 +296,7 @@ Page({
           date_txt: '请选择促销券有效时间',
           count: '',
           profit: '',
+          frequence: '',
           face: '',
           video_list: video_list
         })

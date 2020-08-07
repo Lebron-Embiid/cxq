@@ -968,20 +968,8 @@ Page({
     }else if(this.data.identity == 'agent'){
       if(this.data.index == 0){
         // 促销券编辑
-        addCouponAgent({
-          couponId: this.data.coupon_list[index].id
-        }).then(ress=>{
-          if(ress.code == 200){
-            wx.showToast({
-              title: ress.msg,
-              duration: 1500
-            })
-          }
-          // setTimeout(()=>{
-          //   this.setData({
-          //     is_home: true
-          //   })
-          // },1500)
+        wx.navigateTo({
+          url: '/pages/bossCouponDetail/index?id='+this.data.coupon_list[index].id
         })
       }
       if(this.data.index == 1){
@@ -993,16 +981,20 @@ Page({
   },
   toUser(){
     if(this.data.is_home == true){
-      if(wx.getStorageSync('check') == 1){
-        wx.navigateTo({
-          url: '/pages/userInfo/index',
-        })
-      }else{
-        wx.showToast({
-          title: '请先登录',
-          icon: 'none'
-        })
-      }
+      wx.navigateBack({
+        delta: 1
+      })
+      // if(wx.getStorageSync('check') == 1){
+      //   // wx.navigateTo({
+      //   //   url: '/pages/userInfo/index',
+      //   // })
+        
+      // }else{
+      //   wx.showToast({
+      //     title: '请先登录',
+      //     icon: 'none'
+      //   })
+      // }
     }else{
       this.setData({
         is_home: true,

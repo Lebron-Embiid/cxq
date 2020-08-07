@@ -3,7 +3,8 @@ import * as echarts from '../../components/ec-canvas/echarts';
 import {
   agent_coupon_profit_list,
   seller_coupon_profit_list,
-  coupon_sell_trend_chart
+  coupon_sell_trend_chart,
+  coupon_sell_trend_chart_month
 } from '../../api/user.js'
 
 var Chart = null;
@@ -22,7 +23,10 @@ Page({
     page: 1,
     ec: {
       lazyLoad: true // 延迟加载
-    }
+    },
+    selectDayMonth: true,
+    lastArr: [],
+    lastMonth: []
   },
 
   /**
@@ -37,9 +41,18 @@ Page({
     var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
     var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
     var today = Y + '-' + M + '-' + D;
+    
+    let last7 = [];
+    for(let i=0;i<=9;i++){
+      this.getLastSevenDay(i);
+      // 获取最近7天的日期  this.getLastSevenDay(i).M_before+'月'+
+      last7.unshift(this.getLastSevenDay(i).D_before);
+    }
+
     this.setData({
       type: options.type,
-      date: today
+      date: today,
+      lastArr: last7
     })
 
     this.getAgentProfitList();
@@ -78,23 +91,54 @@ Page({
 
   },
   getData(){
-    coupon_sell_trend_chart().then((res)=>{
-      if(res.code == 200){
-        for(let i in res.data){
+    if(this.data.selectDayMonth == true){
+      coupon_sell_trend_chart().then((res)=>{
+        if(res.code == 200){
+          for(let i in res.data){
+            for(let j in res.data[i].data){
+              if(res.data[i].data[j] != 0){
+                this.data.dataList.push({
+                  name: res.data[i].couponName,
+                  type: 'line',
+                  smooth: true,
+                  data: res.data[i].data
+                })
+              }
+            }
+          }
+          this.setData({
+            dataList: this.data.dataList
+          })
+          console.log(this.data.dataList)
+          this.init_echarts();
+        }
+      })
+    }else{
+      coupon_sell_trend_chart_month().then((res)=>{
+        if(res.code == 200){
           this.data.dataList.push({
-            name: res.data[i].couponName,
+            name: '',
             type: 'line',
             smooth: true,
-            data: res.data[i].data
+            data: res.data.data
           })
+          
+          let date = res.data.date;
+          for(let j in date){
+            this.data.lastMonth.push(date[j].split('-')[1]);
+          }
+
+          this.setData({
+            dataList: this.data.dataList,
+            lastMonth: this.data.lastMonth
+          })
+          console.log(this.data.lastMonth);
+          console.log(this.data.dataList)
+          this.init_echarts();
         }
-        this.setData({
-          dataList: this.data.dataList
-        })
-        console.log(this.data.dataList)
-        this.init_echarts();
-      }
-    })
+      })
+    }
+    
     // dataList = [{
     //   name: 'A',
     //   type: 'line',
@@ -162,14 +206,6 @@ Page({
     Chart.setOption(this.getOption());  //获取新数据
   },
   getOption(){
-    let last7 = [];
-    for(let i=0;i<=6;i++){
-      this.getLastSevenDay(i);
-      // 获取最近7天的日期  this.getLastSevenDay(i).M_before+'月'+
-      last7.unshift(this.getLastSevenDay(i).D_before+'日');
-    }
-    console.log(last7)
-
     var option = {
       title: {
         text: '促销劵出售趋势图',
@@ -192,7 +228,7 @@ Page({
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: last7,
+        data: this.data.lastArr,
         // show: false
       },
       yAxis: {
@@ -208,6 +244,30 @@ Page({
       series: this.data.dataList
     };
     return option;
+  },
+  selectDayOrMonth(){
+    this.data.selectDayMonth = !this.data.selectDayMonth;
+    this.setData({
+      lastMonth: [],
+      dataList: [],
+      selectDayMonth: this.data.selectDayMonth
+    })
+
+    let last7 = [];
+    for(let i=0;i<=9;i++){
+      this.getLastSevenDay(i);
+      // 获取最近7天的日期  this.getLastSevenDay(i).M_before+'月'+
+      last7.unshift(this.getLastSevenDay(i).D_before);
+    }
+    if(this.data.selectDayMonth == true){
+      this.data.lastArr = last7;
+    }else{
+      this.data.lastArr = this.data.lastMonth;
+    }
+    this.setData({
+      lastArr: this.data.lastArr
+    })
+    this.getData();
   },
   /**
    * 生命周期函数--监听页面显示
@@ -260,6 +320,8 @@ Page({
   },
   clickNav(e){
     this.setData({
+      lastMonth: [],
+      dataList: [],
       list: [],
       page: 1,
       activeIndex: e.currentTarget.dataset.index

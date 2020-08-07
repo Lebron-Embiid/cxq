@@ -14,7 +14,8 @@ import {
   querySellCouponListBySeller,
   queryUseCouponListBySeller,
   del_coupon_browse,
-  del_coupon_collect
+  del_coupon_collect,
+  del_coupon_purchased
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
@@ -30,7 +31,7 @@ Page({
     identity: '',//boss agent seller 
     user_code: '',
     is_showCode: false,
-    nav_list: ['浏览促销券','收藏促销券','已购销售券'],//,'我想'
+    nav_list: ['浏览促销券','已购销售券'],//,'我想','收藏促销券'
     nav_active: 0,
     look_list: [],
     coupon_list: [],
@@ -58,18 +59,7 @@ Page({
    */
   onLoad(options) {
     console.log(wx.getStorageSync('token'));
-    this.userInfo();
-
-    // 用户二维码
-    showUserQRCode().then((res)=>{
-      const base64ImgUrl = "data:image/png;base64," + res.data;
-      base64src(base64ImgUrl,'userCode',ress=>{
-        this.setData({
-          user_code: ress
-        })
-      })
-    })
-
+    // this.userInfo();
     var that = this;
     //获取用户信息
     wx.checkSession({
@@ -80,6 +70,15 @@ Page({
           key: 'check',
         })
         that.getUserInfo();
+        // 用户二维码
+        showUserQRCode().then((res)=>{
+          const base64ImgUrl = "data:image/png;base64," + res.data;
+          base64src(base64ImgUrl,'userCode',ress=>{
+            that.setData({
+              user_code: ress
+            })
+          })
+        })
       },
       fail () {
         console.log('登录已过期');
@@ -87,7 +86,6 @@ Page({
           data: 2,
           key: 'check',
         })
-        that.getUserInfo();
         // session_key 已经失效，需要重新执行登录流程
       }
     })
@@ -103,9 +101,17 @@ Page({
     //     }
     //   }
     // })
-    
   },
   getUserInfo(){
+    // 用户二维码
+    showUserQRCode().then((res)=>{
+      const base64ImgUrl = "data:image/png;base64," + res.data;
+      base64src(base64ImgUrl,'userCode',ress=>{
+        this.setData({
+          user_code: ress
+        })
+      })
+    })
     getInfo().then(res=>{
       if(res.code == 401){
         
@@ -113,20 +119,20 @@ Page({
       if(res.code == 200){
         let nav_list = [];
         if(res.data.type == 'consumer' || res.data.type == '' || res.data.type == null){
-          nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+          nav_list = ['浏览促销券','已购促销券'];
         }
         if(res.data.type == 'seller'){
           if(this.data.is_look_sell == true){
             nav_list = ['已出售促销券','已验收促销券'];
           }else{
-            nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+            nav_list = ['浏览促销券','已购促销券'];
           }
         }
         if(res.data.type == 'agent'){
-          nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+          nav_list = ['浏览促销券','已购促销券'];
         }
         if(res.data.type == 'boss'){
-          nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+          nav_list = ['浏览促销券','已购促销券'];
         }
         this.setData({
           nav_list: nav_list,
@@ -147,7 +153,7 @@ Page({
 
         if(this.data.identity != 'seller'){
           this.getLookList();
-          this.getCollectList();
+          // this.getCollectList();
           this.getBuyList();
         }
         if(this.data.identity == 'seller'){
@@ -156,7 +162,7 @@ Page({
             this.getConsumeList();
           }else{
             this.getLookList();
-            this.getCollectList();
+            // this.getCollectList();
             this.getBuyList();
           }
         }
@@ -164,7 +170,7 @@ Page({
     })
   },
   getUserLogin(){
-    this.onShow();
+    this.getUserInfo();
   },
   scanCode() {
     wx.scanCode({
@@ -415,7 +421,7 @@ Page({
     if(this.data.is_look_sell == true){
       this.data.nav_list = ['已出售促销券','已验收促销券'];
     }else{
-      this.data.nav_list = ['浏览促销券','收藏促销券','已购促销券'];
+      this.data.nav_list = ['浏览促销券','已购促销券'];
     }
     this.setData({
       nav_active: 0,
@@ -433,7 +439,7 @@ Page({
       this.getConsumeList();
     }else{
       this.getLookList();
-      this.getCollectList();
+      // this.getCollectList();
       this.getBuyList();
     }
   },
@@ -498,6 +504,30 @@ Page({
               that.data.collect_list.splice(index,1);
               that.setData({
                 collect_list: that.data.collect_list
+              })
+              // that.getCollectList();
+            }
+          })
+        }
+      }
+    })
+  },
+  delBuyCollectCoupon(e){
+    var that = this;
+    let index = e.currentTarget.dataset.index;
+    wx.showModal({
+      title: '提示',
+      content: '确定删除该促销券？',
+      success (res){
+        if(res.confirm){
+          del_coupon_purchased({
+            certId: that.data.coupon_list[index].certId,
+            couponId: that.data.coupon_list[index].couponId
+          }).then((resp)=>{
+            if(resp.code == 200){
+              that.data.coupon_list.splice(index,1);
+              that.setData({
+                coupon_list: that.data.coupon_list
               })
               // that.getCollectList();
             }
@@ -596,24 +626,64 @@ Page({
     })
   },
   changeMyInfo(){
-    wx.navigateTo({
-      url: '/pages/merchant/index?type=edit',
-    })
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/merchant/index?type=edit'
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
   },
   toRecordPage(){
-    wx.navigateTo({
-      url: '/pages/recordList/index',
-    })
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/recordList/index'
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
   },
   toInviteAgent(){
-    wx.navigateTo({
-      url: '/pages/inviteList/index',
-    })
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/inviteList/index'
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
+  },
+  toMyBuyCoupon(){
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/myBuyCoupon/index'
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
   },
   showUserCode(){
-    this.setData({
-      is_showCode: true
-    })
+    if(wx.getStorageSync('check') == 1){
+      this.setData({
+        is_showCode: true
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
   },
   hideUserCode(){
     this.setData({
@@ -621,8 +691,32 @@ Page({
     })
   },
   toShopTransfer(){
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/shopTransfer/index?type=' + this.data.identity
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
+  },
+  toTransferRecords(){
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/transferRecords/index'
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
+  },
+  toPromotionPage(){
     wx.navigateTo({
-      url: '/pages/shopTransfer/index?type=' + this.data.identity
+      url: '/pages/promotion/index'
     })
   }
 })

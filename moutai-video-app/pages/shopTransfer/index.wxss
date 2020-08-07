@@ -3,8 +3,6 @@
   padding: 30rpx;
   box-sizing: border-box;
 }
-.shop_btn{
-}
 .table_box{
   border: 1px solid #999999;
   box-sizing: border-box;

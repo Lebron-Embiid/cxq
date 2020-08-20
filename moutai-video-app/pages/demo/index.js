@@ -125,7 +125,7 @@ Page({
   },
   onClickLeft() {
     wx.redirectTo({
-      url: '/pages/promotion/index'
+      url: '/pages/userInfo/index'
     })
   }
 })

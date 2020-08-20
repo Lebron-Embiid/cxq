@@ -1,0 +1,7 @@
+<!--pages/couponUseList/index.wxml-->
+<view class="nav_content">
+  <view class="seller_coupon_item" wx:for="{{couponList}}" wx:key="index">
+    <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.date}}</text></view>
+    <view class="seller_bottom"><text></text><text>促销面值：{{item.value}}</text></view>
+  </view>
+</view>

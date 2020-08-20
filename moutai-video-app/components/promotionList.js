@@ -11,6 +11,18 @@ Component({
     list: {
       type: Array,
       value: []
+    },
+    identity: {
+      type: String,
+      value: ''
+    },
+    phone: {
+      type: String,
+      value: ''
+    },
+    has_user: {
+      type: String,
+      value: ''
     }
   },
   /**
@@ -19,12 +31,25 @@ Component({
   data: {
 
   },
-
   /**
    * 组件的方法列表
    */
   methods: {
     getUserPhone(e){
+      console.log(this.data.phone);
+      var that = this;
+      wx.getNetworkType({
+        success (res) {
+          console.log(res.networkType);
+          if(res.networkType == 'unknown' || res.networkType == 'none'){
+            wx.showToast({
+              title: '请检查网络状态',
+              icon: 'none'
+            })
+            return;
+          }
+        }
+      })
       wx.login({
         success: (resg) => {
           getSessinKey(resg.code).then(skres => {
@@ -33,13 +58,30 @@ Component({
               iv: e.detail.iv,
               sessionKey: skres.data.sessionKey
             }).then((upres)=>{
-              
+              if(upres.code == 200){
+                wx.removeStorageSync('token');
+                wx.setStorage({
+                  key: "token",
+                  data: upres.data.token,
+                  success: ()=>{
+                    that.triggerEvent('myshow')
+                  }
+                })
+              }
             })
           })
         }
       })
     },
     clickItem(e){
+      if(wx.getStorageSync('check') != 1){
+        // session_key 已经失效，需要重新执行登录流程
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        })
+        return;
+      }
       var myEventDetail = {
         title: e.currentTarget.dataset.item.title,
         index: e.currentTarget.dataset.index

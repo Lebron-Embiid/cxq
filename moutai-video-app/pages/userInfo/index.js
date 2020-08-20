@@ -60,6 +60,10 @@ Page({
   onLoad(options) {
     console.log(wx.getStorageSync('token'));
     // this.userInfo();
+    
+    // this.getLookList();
+  },
+  onShow() {
     var that = this;
     //获取用户信息
     wx.checkSession({
@@ -89,18 +93,6 @@ Page({
         // session_key 已经失效，需要重新执行登录流程
       }
     })
-    // this.getLookList();
-  },
-  onShow() {
-    // queryBusinessInfo().then((res)=>{
-    //   if(res.code == 200){
-    //     if(res.data.status == '待审批'){
-    //       this.setData({
-    //         is_pass: 1
-    //       })
-    //     }
-    //   }
-    // })
   },
   getUserInfo(){
     // 用户二维码
@@ -170,7 +162,7 @@ Page({
     })
   },
   getUserLogin(){
-    this.getUserInfo();
+    this.onShow();
   },
   scanCode() {
     wx.scanCode({
@@ -371,50 +363,42 @@ Page({
       // sellerList1: [],
       // sellerList2: []
     })
-    // if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
-    //   if(index == 0){
-    //     this.getLookList();
-    //   }else if(index == 1){
-    //     this.getCollectList();
-    //   }else{
-    //     this.getBuyList();
-    //   }
-    // }
-    // if(this.data.identity == 'seller'){
-    //   if(this.data.is_look_sell == true){
-    //     if(index == 0){
-    //       this.getSellList();//已出售促销券
-    //     }else{
-    //       this.getConsumeList();//已验收促销券
-    //     }
-    //   }else{
-    //     if(index == 0){
-    //       this.getLookList();
-    //     }else if(index == 1){
-    //       this.getCollectList();
-    //     }else{
-    //       this.getBuyList();
-    //     }
-    //   }
-    // }
-    // if(this.data.identity == 'agent'){
-    //   if(index == 0){
-    //     this.getLookList();
-    //   }else if(index == 1){
-    //     this.getCollectList();
-    //   }else{
-    //     this.getBuyList();
-    //   }
-    // }
-    // if(this.data.identity == 'boss'){
-    //   if(index == 0){
-    //     this.getLookList();
-    //   }else if(index == 1){
-    //     this.getCollectList();
-    //   }else{
-    //     this.getBuyList();
-    //   }
-    // }
+    if(this.data.identity == 'consumer' || this.data.identity == '' || this.data.identity == null){
+      if(index == 0){
+        this.getLookList();
+      }else{
+        this.getBuyList();
+      }
+    }
+    if(this.data.identity == 'seller'){
+      if(this.data.is_look_sell == true){
+        if(index == 0){
+          this.getSellList();//已出售促销券
+        }else{
+          this.getConsumeList();//已验收促销券
+        }
+      }else{
+        if(index == 0){
+          this.getLookList();
+        }else{
+          this.getBuyList();
+        }
+      }
+    }
+    if(this.data.identity == 'agent'){
+      if(index == 0){
+        this.getLookList();
+      }else{
+        this.getBuyList();
+      }
+    }
+    if(this.data.identity == 'boss'){
+      if(index == 0){
+        this.getLookList();
+      }else{
+        this.getBuyList();
+      }
+    }
   },
   toLookSellList(){
     this.data.is_look_sell = !this.data.is_look_sell;
@@ -665,6 +649,18 @@ Page({
     if(wx.getStorageSync('check') == 1){
       wx.navigateTo({
         url: '/pages/myBuyCoupon/index'
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
+  },
+  toCouponUseList(){
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: '/pages/couponUseList/index'
       })
     }else{
       wx.showToast({

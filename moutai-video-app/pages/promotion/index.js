@@ -701,7 +701,11 @@ Page({
                     that.setData({
                       dataStr: ''
                     })
-                    publicFun.getToast('出售成功！','success');
+                    wx.showModal({
+                      title: "提示",
+                      content: "出售成功！",
+                      showCancel: false
+                    })
                   }
                 })
               }
@@ -726,7 +730,11 @@ Page({
                 param: data
               }).then((resg)=>{
                 if(resg.code == 200){
-                  publicFun.getToast('验证成功！','success');
+                  wx.showModal({
+                    title: "提示",
+                    content: "验证成功！",
+                    showCancel: false
+                  })
                 }
               })
             }
@@ -759,11 +767,13 @@ Page({
       }
     }else{
       // 消费者
-      if(this.data.phone == null){
-        wx.showToast({
-          title: '此功能需获取您的手机号',
-          icon: 'none'
-        })
+      if(this.data.phone == null || this.data.phone == ''){
+        // wx.showToast({
+        //   title: '此功能需获取您的手机号',
+        //   icon: 'none'
+        // })
+        this.getUserPhone();
+        this.getOnShow();
         return;
       }
 
@@ -828,6 +838,9 @@ Page({
         // 我做编辑人
       }
     }
+  },
+  getOnShow(){
+    this.onShow();
   },
   updateToken(){
     var that = this;
@@ -1092,12 +1105,24 @@ Page({
           header: {
             'Authentication': wx.getStorageSync('token')
           },
+          formData:{
+            type: 'cp'
+          },
           success (imgRes){
             console.log('----自定义上传促销券----2：'+JSON.stringify(imgRes.data));
-            wx.hideLoading();
-            wx.navigateTo({
-              url: '/pages/editCoupon/index?type=custom&id='+JSON.parse(imgRes.data).data,
-            })
+            console.log(JSON.parse(imgRes.data).msg);
+            if(JSON.parse(imgRes.data).code == 200){
+              wx.hideLoading();
+              wx.navigateTo({
+                url: '/pages/editCoupon/index?type=custom&id='+JSON.parse(imgRes.data).data,
+              })
+            }else{
+              wx.showModal({
+                title: "提示",
+                content: JSON.parse(imgRes.data).msg || JSON.parse(imgRes.data).message,
+                showCancel: false
+              })
+            }
           }
         })
       })

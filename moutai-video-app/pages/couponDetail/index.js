@@ -30,7 +30,8 @@ Page({
       cert_id: options.certId,
       number: options.number
     })
-    if(options.buy){
+    if(options.buy == 'ok'){
+      // 展示已购促销券
       show_sell_coupon_image({
         certId: options.certId,
         number: options.number
@@ -39,12 +40,13 @@ Page({
           const base64ImgUrl = "data:image/png;base64," + res.data;
           base64src(base64ImgUrl,options.certId,ress=>{
             this.setData({
-              src: ress
+              save_src: ress
             })
           })
         }
       })
     }else{
+      // 展示浏览促销券
       buy_coupon({
         certId: options.certId
       }).then((res)=>{
@@ -52,7 +54,7 @@ Page({
           const base64ImgUrl = "data:image/png;base64," + res.data;
           base64src(base64ImgUrl,options.certId,ress=>{
             this.setData({
-              src: ress
+              save_src: ress
             })
           })
         }

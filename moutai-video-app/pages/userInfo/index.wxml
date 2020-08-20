@@ -23,6 +23,7 @@
     <van-cell wx:if="{{identity == 'agent'}}" is-link title="邀请列表" bindtap="toInviteAgent" />
     <van-cell wx:if="{{identity == 'seller'}}" is-link title="{{is_look_sell==true?'浏览记录':'销售记录'}}" bindtap="toLookSellList" />
     <van-cell is-link title="已购促销券" bindtap="toMyBuyCoupon" />
+    <van-cell is-link title="促销使用记录" bindtap="toCouponUseList" />
     <!-- <van-cell is-link title="我的二维码" bindtap="previewCode" /> -->
     <!-- <van-cell icon="/assets/video.svg" is-link title="我的视频" link-type="navigateTo" url="/pages/myVideo/index" /> -->
     <!-- <van-cell icon="/assets/protocol.svg" is-link title="法律条文与隐私协议" link-type="navigateTo" url="/pages/protocol/index" /> -->

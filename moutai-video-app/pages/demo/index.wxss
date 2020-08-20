@@ -6,6 +6,18 @@
 .navBar {
   background: #212121 !important;
 }
+.navBar .van-nav-bar__left{
+  display: flex !important;
+  align-items: center !important;
+}
+.navBar .van-icon-arrow-left{
+  color: #ffffff !important;
+  font-size: 24px !important;
+}
+.navBar .van-nav-bar__text{
+  color: #ffffff !important;
+  background: none !important;
+}
 
 video {
   margin-top: 64px;

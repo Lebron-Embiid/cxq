@@ -351,9 +351,15 @@ Page({
       pageSize: 20
     }).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          list: this.data.list.concat(res.data.records)
-        })
+        if(this.data.page == 1){
+          this.setData({
+            list: res.data.records
+          })
+        }else{
+          this.setData({
+            list: this.data.list.concat(res.data.records)
+          })
+        }
       }
     })
   },
@@ -364,9 +370,15 @@ Page({
       pageSize: 20
     }).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          list: this.data.list.concat(res.data.records)
-        })
+        if(this.data.page == 1){
+          this.setData({
+            list: res.data.records
+          })
+        }else{
+          this.setData({
+            list: this.data.list.concat(res.data.records)
+          })
+        }
       }
     })
   },

@@ -546,6 +546,27 @@ export function coupon_sell_trend_chart_month() {
     method: "GET"
   })
 }
+//代理人趋势图:最近七天每天销售劵总[收益])
+export function coupon_agent_profit_trend_chart() {
+  return request({
+    url: "/applet/coupon/coupon_agent_profit_trend_chart",
+    method: "GET"
+  })
+}
+//销售员趋势图:最近10天每天销售劵总[收益])
+export function coupon_seller_profit_trend_chart() {
+  return request({
+    url: "/applet/coupon/coupon_seller_profit_trend_chart",
+    method: "GET"
+  })
+}
+//销售员趋势图:最近10天每天销售劵总[折让])
+export function coupon_seller_discount_trend_chart() {
+  return request({
+    url: "/applet/coupon/coupon_seller_discount_trend_chart",
+    method: "GET"
+  })
+}
 //店铺转让
 export function business_tran(data) {
   return request({
@@ -610,6 +631,15 @@ export function business_tran_record(data) {
     data
   })
 }
+//查看用户促销劵使用记录(消费者查看)
+export function query_consumer_user_coupon_list(data) {
+  return request({
+    url: "/applet/coupon/query_consumer_user_coupon_list",
+    method: "GET",
+    data
+  })
+}
+
 
 
 

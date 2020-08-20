@@ -23,11 +23,11 @@ button.button-hover{
   /* margin-top: 64px; */
 }
 .home_icon{
-  width: 44rpx;
-  height: 44rpx;
+  width: 56rpx;
+  height: 56rpx;
   position: absolute;
-  left: 15rpx;
-  top: 15rpx;
+  left: 30rpx;
+  top: 30rpx;
   z-index: 5;
 }
 

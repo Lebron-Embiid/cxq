@@ -11,7 +11,7 @@
     <view class="nav_item {{activeIndex==index?'active':''}}" bindtap="clickNav" data-index="{{index}}" wx:for="{{tab_list}}" wx:key="index">{{item}}</view>
   </view>
 
-  <view class="chart_btn" bindtap="selectDayOrMonth"><text class="{{selectDayMonth?'active':''}}">天</text> / <text class="{{!selectDayMonth?'active':''}}">月</text></view>
+  <view class="chart_btn" wx:if="{{type=='boss'}}" bindtap="selectDayOrMonth"><text class="{{selectDayMonth?'active':''}}">天</text> / <text class="{{!selectDayMonth?'active':''}}">月</text></view>
   <ec-canvas id="mychart" canvas-id="mychart-line" ec="{{ ec }}"></ec-canvas>
 
   <block wx:if="{{type=='boss' || type=='agent'}}">

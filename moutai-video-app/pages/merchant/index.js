@@ -158,23 +158,34 @@ Page({
         header: {
           'Authentication': wx.getStorageSync('token')
         },
+        formData:{
+          type: ''
+        },
         success (imgRes){
           // console.log('----ios1----'+JSON.stringify(imgRes))
           // console.log('----ios2----'+JSON.stringify(imgRes.data))
           // console.log('----ios3----'+JSON.parse(imgRes.data).data)
-          let res = wx.getSystemInfoSync();
-          let img_pic = JSON.parse(imgRes.data).data;
-          if(res.platform == 'ios'){
-            console.log('ios手机');
+          if(JSON.parse(imgRes.data).code == 200){
+            let res = wx.getSystemInfoSync();
+            let img_pic = JSON.parse(imgRes.data).data;
+            if(res.platform == 'ios'){
+              console.log('ios手机');
+            }
+            if(res.platform == 'android'){
+              console.log('android手机');
+            }
+            
+            that.setData({
+              license: img_pic,
+              is_license: 1
+            })
+          }else{
+            wx.showModal({
+              title: "提示",
+              content: JSON.parse(imgRes.data).msg || JSON.parse(imgRes.data).message,
+              showCancel: false
+            })
           }
-          if(res.platform == 'android'){
-            console.log('android手机');
-          }
-          
-          that.setData({
-            license: img_pic,
-            is_license: 1
-          })
         }
       })
     })
@@ -189,12 +200,23 @@ Page({
         header: {
           'Authentication': wx.getStorageSync('token')
         },
+        formData:{
+          type: ''
+        },
         success (imgRes){
-          let img_pic = JSON.parse(imgRes.data).data;
-          that.setData({
-            back_img: img_pic,
-            is_back: 1
-          })
+          if(JSON.parse(imgRes.data).code == 200){
+            let img_pic = JSON.parse(imgRes.data).data;
+            that.setData({
+              back_img: img_pic,
+              is_back: 1
+            })
+          }else{
+            wx.showModal({
+              title: "提示",
+              content: JSON.parse(imgRes.data).msg || JSON.parse(imgRes.data).message,
+              showCancel: false
+            })
+          }
         }
       })
     })
@@ -209,12 +231,23 @@ Page({
         header: {
           'Authentication': wx.getStorageSync('token')
         },
+        formData:{
+          type: ''
+        },
         success (imgRes){
-          let img_pic = JSON.parse(imgRes.data).data;
-          that.setData({
-            card_img: img_pic,
-            is_card: 1
-          })
+          if(JSON.parse(imgRes.data).code == 200){
+            let img_pic = JSON.parse(imgRes.data).data;
+            that.setData({
+              card_img: img_pic,
+              is_card: 1
+            })
+          }else{
+            wx.showModal({
+              title: "提示",
+              content: JSON.parse(imgRes.data).msg || JSON.parse(imgRes.data).message,
+              showCancel: false
+            })
+          }
         }
       })
     })
@@ -229,12 +262,23 @@ Page({
         header: {
           'Authentication': wx.getStorageSync('token')
         },
+        formData:{
+          type: ''
+        },
         success (imgRes){
-          let img_pic = JSON.parse(imgRes.data).data;
-          that.setData({
-            book_img: img_pic,
-            is_book: 1
-          })
+          if(JSON.parse(imgRes.data).code == 200){
+            let img_pic = JSON.parse(imgRes.data).data;
+            that.setData({
+              book_img: img_pic,
+              is_book: 1
+            })
+          }else{
+            wx.showModal({
+              title: "提示",
+              content: JSON.parse(imgRes.data).msg || JSON.parse(imgRes.data).message,
+              showCancel: false
+            })
+          }
         }
       })
     })

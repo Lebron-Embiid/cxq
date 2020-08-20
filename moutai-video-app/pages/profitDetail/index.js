@@ -7,7 +7,10 @@ import {
   coupon_profit_trend_chart,
   coupon_discount_trend_chart,
   coupon_profit_trend_chart_month,
-  coupon_discount_trend_chart_month
+  coupon_discount_trend_chart_month,
+  coupon_agent_profit_trend_chart,  //代理人趋势图
+  coupon_seller_profit_trend_chart, //销售员收益趋势图
+  coupon_seller_discount_trend_chart//销售员折让趋势图
 } from '../../api/user.js'
 
 var Chart = null;
@@ -41,9 +44,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.echartsComponnet = this.selectComponent('#mychart');
-    this.getData(); //获取数据
-    
     var date = new Date();
     var Y = date.getFullYear();
     var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
@@ -62,6 +62,8 @@ Page({
         activeIndex: options.index
       })
     }
+    console.log(this.data.activeIndex)
+
     if(options.bossId){
       this.setData({
         bossId: options.bossId
@@ -76,6 +78,10 @@ Page({
       lastArr: last7
     })
     console.log(this.data.type)
+
+    this.echartsComponnet = this.selectComponent('#mychart');
+    this.getData(); //获取数据
+
     if(this.data.type == 'boss'){
       this.getAgentDetail();
     }else if(this.data.type == 'agent'){
@@ -106,9 +112,15 @@ Page({
     }
     agent_coupon_profit_info(data).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          list: this.data.list.concat(res.data.records)
-        })
+        if(this.data.page == 1){
+          this.setData({
+            list: res.data.records
+          })
+        }else{
+          this.setData({
+            list: this.data.list.concat(res.data.records)
+          })
+        }
       }
     })
   },
@@ -129,9 +141,15 @@ Page({
     }
     seller_coupon_profit_info(data).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          list: this.data.list.concat(res.data.records)
-        })
+        if(this.data.page == 1){
+          this.setData({
+            list: res.data.records
+          })
+        }else{
+          this.setData({
+            list: this.data.list.concat(res.data.records)
+          })
+        }
       }
     })
   },
@@ -152,9 +170,15 @@ Page({
     }
     seller_coupon_discount_info(data).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          list: this.data.list.concat(res.data.records)
-        })
+        if(this.data.page == 1){
+          this.setData({
+            list: res.data.records
+          })
+        }else{
+          this.setData({
+            list: this.data.list.concat(res.data.records)
+          })
+        }
       }
     })
   },  
@@ -263,46 +287,104 @@ Page({
     return lastDay;
   },
   getData(){
-    if(this.data.activeIndex == 0){
-      if(this.data.selectDayMonth == true){
-        coupon_profit_trend_chart().then((res)=>{
-          if(res.code == 200){
-            this.data.dataList.push({
-              name: '',
-              type: 'line',
-              smooth: true,
-              data: res.data
-            })
-            this.setData({
-              dataList: this.data.dataList
-            })
-            this.init_echarts();
-          }
-        })
-      }else{
-        coupon_profit_trend_chart_month().then((res)=>{
-          if(res.code == 200){
-            this.data.dataList.push({
-              name: '',
-              type: 'line',
-              smooth: true,
-              data: res.data.data
-            })
-            let date = res.data.date;
-            for(let j in date){
-              this.data.lastMonth.push(date[j].split('-')[1]);
+    console.log(this.data.type)
+    if(this.data.type == 'boss'){
+      if(this.data.activeIndex == 0){
+        if(this.data.selectDayMonth == true){
+          coupon_profit_trend_chart().then((res)=>{
+            if(res.code == 200){
+              this.data.dataList.push({
+                name: '',
+                type: 'line',
+                smooth: true,
+                data: res.data
+              })
+              this.setData({
+                dataList: this.data.dataList
+              })
+              this.init_echarts();
             }
-            this.setData({
-              dataList: this.data.dataList,
-              lastMonth: this.data.lastMonth
-            })
-            this.init_echarts();
-          }
-        })
+          })
+        }else{
+          coupon_profit_trend_chart_month().then((res)=>{
+            if(res.code == 200){
+              this.data.dataList.push({
+                name: '',
+                type: 'line',
+                smooth: true,
+                data: res.data.data
+              })
+              let date = res.data.date;
+              for(let j in date){
+                this.data.lastMonth.push(date[j].split('-')[1]);
+              }
+              this.setData({
+                dataList: this.data.dataList,
+                lastMonth: this.data.lastMonth
+              })
+              this.init_echarts();
+            }
+          })
+        }
+      }else{
+        if(this.data.selectDayMonth == true){
+          coupon_discount_trend_chart().then((res)=>{
+            if(res.code == 200){
+              this.data.dataList.push({
+                name: '',
+                type: 'line',
+                smooth: true,
+                data: res.data
+              })
+              this.setData({
+                dataList: this.data.dataList
+              })
+              this.init_echarts();
+            }
+          })
+        }else{
+          coupon_discount_trend_chart_month().then((res)=>{
+            if(res.code == 200){
+              this.data.dataList.push({
+                name: '',
+                type: 'line',
+                smooth: true,
+                data: res.data.data
+              })
+              let date = res.data.date;
+              for(let j in date){
+                this.data.lastMonth.push(date[j].split('-')[1]);
+              }
+              this.setData({
+                dataList: this.data.dataList,
+                lastMonth: this.data.lastMonth
+              })
+              this.init_echarts();
+            }
+          })
+        }
       }
+    }else if(this.data.type == 'agent'){
+      coupon_agent_profit_trend_chart({
+        bossId: this.data.bossId
+      }).then((res)=>{
+        if(res.code == 200){
+          this.data.dataList.push({
+            name: '',
+            type: 'line',
+            smooth: true,
+            data: res.data
+          })
+          this.setData({
+            dataList: this.data.dataList
+          })
+          this.init_echarts();
+        }
+      })
     }else{
-      if(this.data.selectDayMonth == true){
-        coupon_discount_trend_chart().then((res)=>{
+      console.log(this.data.activeIndex);
+      if(this.data.activeIndex == 0){
+        coupon_seller_profit_trend_chart().then((res)=>{
           if(res.code == 200){
             this.data.dataList.push({
               name: '',
@@ -317,21 +399,16 @@ Page({
           }
         })
       }else{
-        coupon_discount_trend_chart_month().then((res)=>{
+        coupon_seller_discount_trend_chart().then((res)=>{
           if(res.code == 200){
             this.data.dataList.push({
               name: '',
               type: 'line',
               smooth: true,
-              data: res.data.data
+              data: res.data
             })
-            let date = res.data.date;
-            for(let j in date){
-              this.data.lastMonth.push(date[j].split('-')[1]);
-            }
             this.setData({
-              dataList: this.data.dataList,
-              lastMonth: this.data.lastMonth
+              dataList: this.data.dataList
             })
             this.init_echarts();
           }

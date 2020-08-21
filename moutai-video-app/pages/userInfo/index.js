@@ -356,10 +356,13 @@ Page({
     console.log(index,this.data.identity);
     this.setData({
       nav_active: index,
-      // page: 1,
-      // look_list: [],
-      // coupon_list: [],
-      // collect_list: [],
+      page: 1,
+      page1: 1,
+      page2: 1,
+      page3: 1,
+      look_list: [],
+      coupon_list: [],
+      collect_list: [],
       // sellerList1: [],
       // sellerList2: []
     })

@@ -97,7 +97,7 @@ Page({
   // 代理人详情
   getAgentDetail(){
     let data = {
-      date: this.data.date,
+      date: this.data.today,
       pageNum: this.data.page,
       pageSize: 20,
       memberId: this.data.id
@@ -127,7 +127,7 @@ Page({
   // 销售员收益详情
   getSellerProfitDetail(){
     let data = {
-      date: this.data.date,
+      date: this.data.today,
       pageNum: this.data.page,
       pageSize: 20,
       memberId: this.data.id
@@ -156,7 +156,7 @@ Page({
   // 销售员折让详情
   getSellerDiscountDetail(){
     let data = {
-      date: this.data.date,
+      date: this.data.today,
       pageNum: this.data.page,
       pageSize: 20,
       memberId: this.data.id

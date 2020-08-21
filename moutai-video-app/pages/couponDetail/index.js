@@ -37,10 +37,11 @@ Page({
         number: options.number
       }).then((res)=>{
         if(res.code == 200){
+          // console.log('已购的图片：'+res.data);
           const base64ImgUrl = "data:image/png;base64," + res.data;
           base64src(base64ImgUrl,options.certId,ress=>{
             this.setData({
-              save_src: ress
+              src: ress
             })
           })
         }
@@ -51,10 +52,11 @@ Page({
         certId: options.certId
       }).then((res)=>{
         if(res.code == 200){
+          // console.log('浏览的图片：'+res.data);
           const base64ImgUrl = "data:image/png;base64," + res.data;
           base64src(base64ImgUrl,options.certId,ress=>{
             this.setData({
-              save_src: ress
+              src: ress
             })
           })
         }
@@ -65,6 +67,7 @@ Page({
       certId: options.certId
     }).then((res)=>{
       if(res.code == 200){
+        console.log('下载的图片：'+res.data);
         this.setData({
           save_src: res.data
         })
@@ -147,7 +150,7 @@ Page({
   },
   downloadImg(){
     var that = this;
-    console.log(that.data.save_src)
+    console.log('下载的图片'+that.data.save_src)
     wx.showModal({
       title: '提示',
       content: '确定下载促销券图片？',
@@ -161,12 +164,27 @@ Page({
                 wx.saveImageToPhotosAlbum({
                   filePath: ress.tempFilePath,
                   success: function () { 
-                    publicFun.getToast('下载成功');
+                    // publicFun.getToast('下载成功');
+                    wx.showModal({
+                      title: "提示",
+                      content: "下载成功",
+                      showCancel: false
+                    })
                   }
                 })
               }
             },
             fail() {
+              wx.openSetting({
+                success(settingdata) {
+                  console.log(settingdata)
+                  if (settingdata.authSetting['scope.writePhotosAlbum']) {
+                    console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
+                  } else {
+                    console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+                  }
+                }
+              })
               publicFun.getToast('下载失败');
             }
           })

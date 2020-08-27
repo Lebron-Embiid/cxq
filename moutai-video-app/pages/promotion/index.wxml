@@ -27,7 +27,7 @@
       </view>
       
       <view wx:if="{{is_home}}">
-        <promotion-list list="{{promotion_list}}" has_user="{{has_user}}" phone="{{phone}}" identity="{{identity}}" bind:myevent="getListClick" bind:myshow="getOnShow"></promotion-list>
+        <promotion-list list="{{promotion_list}}" is_click="{{is_click}}" has_user="{{has_user}}" phone="{{phone}}" identity="{{identity}}" bind:myevent="getListClick" bind:myshow="getOnShow"></promotion-list>
       </view>
       <view wx:else>
         <!-- 促销券编辑 -->

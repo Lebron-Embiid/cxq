@@ -89,8 +89,14 @@ Page({
     }else{
       if(this.data.activeIndex == 0){
         this.getSellerProfitDetail();
+        this.setData({
+          title: '促销劵收益趋势图'
+        })
       }else{
         this.getSellerDiscountDetail();
+        this.setData({
+          title: '促销劵折让趋势图'
+        })
       }
     }
   },

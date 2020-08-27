@@ -314,6 +314,12 @@ Page({
   },
   getMyBusinessList(){
     my_business_list().then((res)=>{
+      if(res.data.length == 0){
+        this.setData({
+          select_bossId: ''
+        })
+        return;
+      }
       if(res.code == 200){
         this.setData({
           myBusinessList: res.data,
@@ -846,28 +852,22 @@ Page({
     var that = this;
     update_user_info().then((res)=>{
       if(res.code == 200){
-        wx.removeStorageSync('token');
-        wx.setStorage({
-          key: "token",
-          data: res.data.token,
-          success: ()=>{
-            var id_title = '';
-            var back_img = '../../assets/indexBackground.png';
-            var promotion_list = [
-              {icon: '/assets/nav_icon9.png',title: '我当销售员'},
-              {icon: '/assets/nav_icon8.png',title: '我做代理人'},
-              {icon: '/assets/nav_icon6.png',title: '我发促销券'}
-            ]
-            that.setData({
-              is_home: true,
-              is_click: false,
-              id_title: '',
-              back_img: back_img,
-              promotion_list: promotion_list
-            })
-            that.onShow();
-          }
+        wx.setStorageSync('token', res.data.token);
+        var id_title = '';
+        var back_img = '../../assets/indexBackground.png';
+        var promotion_list = [
+          {icon: '/assets/nav_icon9.png',title: '我当销售员'},
+          {icon: '/assets/nav_icon8.png',title: '我做代理人'},
+          {icon: '/assets/nav_icon6.png',title: '我发促销券'}
+        ]
+        that.setData({
+          is_home: true,
+          is_click: false,
+          id_title: '',
+          back_img: back_img,
+          promotion_list: promotion_list
         })
+        that.onShow();
       }
     })
   },
@@ -875,7 +875,6 @@ Page({
     var that = this;
     wx.getNetworkType({
       success (res) {
-        console.log(res.networkType);
         if(res.networkType == 'unknown' || res.networkType == 'none'){
           wx.showToast({
             title: '请检查网络状态',
@@ -894,14 +893,8 @@ Page({
             sessionKey: skres.data.sessionKey
           }).then((upres)=>{
             if(upres.code == 200){
-              wx.removeStorageSync('token');
-              wx.setStorage({
-                key: "token",
-                data: upres.data.token,
-                success: ()=>{
-                  that.onShow();
-                }
-              })
+              wx.setStorageSync('token', upres.data.token);
+              that.onShow();
             }
           })
         })

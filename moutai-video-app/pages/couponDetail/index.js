@@ -8,6 +8,7 @@ import {
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
+var timer = null;
 Page({
 
   /**
@@ -15,6 +16,7 @@ Page({
    */
   data: {
     cert_id: '',
+    number: '',
     src: '',
     save_src: '',
     user_code: '',
@@ -30,37 +32,66 @@ Page({
       cert_id: options.certId,
       number: options.number
     })
-    if(options.buy == 'ok'){
-      // 展示已购促销券
-      show_sell_coupon_image({
-        certId: options.certId,
-        number: options.number
-      }).then((res)=>{
-        if(res.code == 200){
-          // console.log('已购的图片：'+res.data);
-          const base64ImgUrl = "data:image/png;base64," + res.data;
-          base64src(base64ImgUrl,options.certId,ress=>{
+    wx.showLoading({
+      title: '加载中'
+    })
+    if(options.type == 'buy'){
+      // console.log('已购原始图：'+wx.getStorageSync('buy_old'));
+      // if(wx.getStorageSync('buy_old') != ''){
+      //   wx.hideLoading();
+      //   this.setData({
+      //     src: wx.getStorageSync('buy_old')
+      //   })
+      // }else{
+        // 展示已购促销券
+        show_sell_coupon_image({
+          certId: options.certId,
+          number: options.number
+        }).then((res)=>{
+          if(res.code == 200){
+            // console.log('已购的图片：'+res.data);
             this.setData({
-              src: ress
+              src: res.data
             })
-          })
-        }
-      })
+            wx.hideLoading();
+          }
+        }).catch((err)=>{
+          wx.hideLoading();
+          timer = setInterval(()=>{
+            this.showBuyPhoto();
+          },2000)
+        })
+      // }
     }else{
-      // 展示浏览促销券
-      buy_coupon({
-        certId: options.certId
-      }).then((res)=>{
-        if(res.code == 200){
-          // console.log('浏览的图片：'+res.data);
-          const base64ImgUrl = "data:image/png;base64," + res.data;
-          base64src(base64ImgUrl,options.certId,ress=>{
+      console.log('浏览原始图：'+wx.getStorageSync('look_old'));
+      // if(wx.getStorageSync('look_old') != ''){
+      //   wx.hideLoading();
+      //   this.setData({
+      //     src: wx.getStorageSync('look_old')
+      //   })
+      // }else{
+        // 展示促销劵原始图[点击浏览列表]
+        buy_coupon({
+          certId: options.certId
+        }).then((res)=>{
+          if(res.code == 200){
             this.setData({
-              src: ress
+              src: res.data
             })
-          })
-        }
-      })
+            wx.hideLoading();
+            // console.log('浏览的图片：'+res.data);
+            // const base64ImgUrl = "data:image/png;base64," + res.data;
+            // base64src(base64ImgUrl,options.certId,ress=>{
+              
+            // })
+          }
+        }).catch((err)=>{
+          wx.hideLoading();
+          timer = setInterval(()=>{
+            this.showLookPhoto();
+          },2000)
+        })
+      // }
     }
     
     save_coupon_image({
@@ -102,7 +133,33 @@ Page({
   onReady: function () {
 
   },
-
+  showBuyPhoto(){
+    // 展示已购促销券
+    show_sell_coupon_image({
+      certId: this.data.cert_id,
+      number: this.data.number
+    }).then((res)=>{
+      clearInterval(timer);
+      if(res.code == 200){
+        // console.log('已购的图片：'+res.data);
+        this.setData({
+          src: res.data
+        })
+      }
+    })
+  },
+  showLookPhoto(){
+    buy_coupon({
+      certId: this.data.cert_id
+    }).then((res)=>{
+      clearInterval(timer);
+      if(res.code == 200){
+        this.setData({
+          src: res.data
+        })
+      }
+    })
+  },
   /**
    * 生命周期函数--监听页面显示
    */
@@ -114,14 +171,14 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-
+    clearInterval(timer);
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-
+    clearInterval(timer);
   },
 
   /**

@@ -39,9 +39,6 @@ Page({
     })
   },
   toLogin() {
-    wx.removeStorage({
-      key: 'token'
-    })
     wx.navigateTo({
       url: '/pages/login/index'
     })

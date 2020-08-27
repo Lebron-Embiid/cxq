@@ -48,10 +48,7 @@ Page({
                     unionId: skres.data.openId
                   }).then(logRes => {
                     if(logRes.code == 200){
-                      wx.setStorage({
-                        key: "token",
-                        data: logRes.data.token
-                      })
+                      wx.setStorageSync('token', logRes.data.token);
                       wx.redirectTo({
                         url: "/pages/userInfo/index"
                       })
@@ -168,11 +165,7 @@ Page({
                     unionId: that.openId
                   }).then(logRes => {
                     if(res.code == 200){
-                      wx.setStorage({
-                        key: "token",
-                        data: logRes.data.token
-                      })
-                    
+                      wx.setStorageSync('token', logRes.data.token);
                       wx.redirectTo({
                         url: '/pages/index/index'
                       })

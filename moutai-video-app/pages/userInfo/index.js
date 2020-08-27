@@ -15,7 +15,9 @@ import {
   queryUseCouponListBySeller,
   del_coupon_browse,
   del_coupon_collect,
-  del_coupon_purchased
+  del_coupon_purchased,
+  buy_coupon,
+  show_sell_coupon_image
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
@@ -526,7 +528,7 @@ Page({
   selectLook(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?type=buy&src='+this.data.look_list[index].coupon+'&certId='+this.data.look_list[index].certId
+      url: '/pages/couponDetail/index?type=look&src='+this.data.look_list[index].coupon+'&certId='+this.data.look_list[index].certId
     })
   },
   toCollect(e){
@@ -557,7 +559,7 @@ Page({
   selectCoupon(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?buy=ok&src='+this.data.coupon_list[index].coupon+'&certId='+this.data.coupon_list[index].certId+'&number='+this.data.coupon_list[index].number
+      url: '/pages/couponDetail/index?type=buy&buy=ok&src='+this.data.coupon_list[index].coupon+'&certId='+this.data.coupon_list[index].certId+'&number='+this.data.coupon_list[index].number
     })
   },
   clickItem(e){

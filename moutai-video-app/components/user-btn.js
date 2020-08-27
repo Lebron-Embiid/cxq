@@ -59,14 +59,8 @@ Component({
                     }).then(logRes => {
                       console.log(logRes.data)
                       if(logRes.code == 200){
-                        wx.setStorage({
-                          key: "token",
-                          data: logRes.data.token
-                        })
-                        wx.setStorage({
-                          key: "userInfo",
-                          data: logRes.data
-                        })
+                        wx.setStorageSync('token', logRes.data.token);
+                        wx.setStorageSync('userInfo', logRes.data);
                         this.triggerEvent('mylogin')
                       }
                     }).catch(err => {

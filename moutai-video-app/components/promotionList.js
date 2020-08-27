@@ -23,6 +23,10 @@ Component({
     has_user: {
       type: String,
       value: ''
+    },
+    is_click: {
+      type: Boolean,
+      value: ''
     }
   },
   /**
@@ -59,14 +63,8 @@ Component({
               sessionKey: skres.data.sessionKey
             }).then((upres)=>{
               if(upres.code == 200){
-                wx.removeStorageSync('token');
-                wx.setStorage({
-                  key: "token",
-                  data: upres.data.token,
-                  success: ()=>{
-                    that.triggerEvent('myshow')
-                  }
-                })
+                wx.setStorageSync('token', upres.data.token);
+                that.triggerEvent('myshow');
               }
             })
           })

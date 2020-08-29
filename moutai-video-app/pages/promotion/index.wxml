@@ -57,7 +57,7 @@
             <scroll-view bindscrolltolower="getIssuedMore" lower-threshold="100" class="scroll_view_H" scroll-x="true">
               <view class="scroll_item" bindlongpress="delCoupon" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{issued_list}}" wx:key="index">
                 <view class="txt">{{item.couponName}}</view>
-                <image src="{{item.src}}" mode="widthFix"></image>
+                <image src="{{item.rqcode}}" mode="widthFix"></image>
               </view>
             </scroll-view>
           </view>

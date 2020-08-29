@@ -197,22 +197,34 @@ Page({
       pageSize: 3
     }).then(lookres=>{
       if(lookres.code == 200){
-        for(let i in lookres.data.records){
-          let item = lookres.data.records[i];
-          let base64 = "data:image/png;base64," + item.rqcode;
-          base64src(base64,item.couponId,ress=>{
-            this.data.look_list.push({
-              certId: item.certId,
-              couponId: item.couponId,
-              coupon: ress,
-              couponName: item.couponName
-            });
-            this.setData({
-              look_list: this.data.look_list,
-              pages: lookres.data.pages
-            })
+        if(this.data.page1 == 1){
+          this.setData({
+            look_list: lookres.data.records,
+            pages: lookres.data.pages
+          })
+        }else{
+          this.setData({
+            look_list: this.data.look_list.concat(lookres.data.records),
+            pages: lookres.data.pages
           })
         }
+        // for(let i in lookres.data.records){
+        //   let item = lookres.data.records[i];
+        //   let base64 = "data:image/png;base64," + item.rqcode;
+        //   let random = '';
+        //   for (var i = 0; i < 8; i++) {
+        //     random += Math.floor(Math.random(i)*10);
+        //   }
+        //   base64src(base64,random,ress=>{
+        //     this.data.look_list.push({
+        //       certId: item.certId,
+        //       couponId: item.couponId,
+        //       coupon: ress,
+        //       couponName: item.couponName
+        //     });
+            
+        //   })
+        // }
       }
     })
   },
@@ -226,7 +238,11 @@ Page({
         for(let i in res.data.records){
           let item = res.data.records[i];
           let base64 = "data:image/png;base64," + item.rqcode;
-          base64src(base64,item.couponId,ress=>{
+          let random = '';
+          for (var i = 0; i < 8; i++) {
+            random += Math.floor(Math.random(i)*10);
+          }
+          base64src(base64,random,ress=>{
             this.data.collect_list.push({
               certId: item.certId,
               id: item.couponId,
@@ -250,24 +266,40 @@ Page({
         pageSize: 3
       }).then(buyres=>{
         if(buyres.code == 200){
-          // console.log('已购促销券返回的json数据：'+JSON.stringify(buyres.data))
-          for(let i in buyres.data.records){
-            let item = buyres.data.records[i];
-            let base64 = "data:image/png;base64," + item.rqcode;
-            base64src(base64,item.certId,ress=>{
-              this.data.coupon_list.push({
-                certId: item.certId,
-                id: item.couponId,
-                number: item.number,
-                coupon: ress,
-                couponName: item.couponName
-              });
-              this.setData({
-                coupon_list: this.data.coupon_list,
-                pages: buyres.data.pages
-              })
+          if(this.data.page3 == 1){
+            this.setData({
+              coupon_list: buyres.data.records,
+              pages: buyres.data.pages
+            })
+          }else{
+            this.setData({
+              coupon_list: this.data.coupon_list.concat(buyres.data.records),
+              pages: buyres.data.pages
             })
           }
+          
+          // console.log('已购促销券返回的json数据：'+JSON.stringify(buyres.data))
+          // for(let i in buyres.data.records){
+          //   let item = buyres.data.records[i];
+          //   let base64 = "data:image/png;base64," + item.rqcode;
+          //   let random = '';
+          //   for (var i = 0; i < 8; i++) {
+          //     random += Math.floor(Math.random(i)*10);
+          //   }
+          //   base64src(base64,random,ress=>{
+          //     this.data.coupon_list.push({
+          //       certId: item.certId,
+          //       id: item.couponId,
+          //       number: item.number,
+          //       coupon: ress,
+          //       couponName: item.couponName
+          //     });
+          //     this.setData({
+          //       coupon_list: this.data.coupon_list,
+          //       pages: buyres.data.pages
+          //     })
+          //   })
+          // }
           // let coupon_list = this.data.coupon_list;
           // if(this.data.page == 1){
           //   coupon_list = res.data.records;

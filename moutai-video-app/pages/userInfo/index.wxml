@@ -39,7 +39,7 @@
       <scroll-view class="scroll_view_H" bindscrolltolower="getLookMore" scroll-x="true" style="width: 100%">
         <view class="scroll_item" bindlongpress="delCoupon" bindtap="selectLook" data-index="{{index}}" wx:for="{{look_list}}" wx:key="index">
           <view class="txt">{{item.couponName}}</view>
-          <image src="{{item.coupon}}" mode="widthFix"></image>
+          <image src="{{item.rqcode}}" mode="widthFix"></image>
           <!-- <button type="default" size="mini" data-item="{{item}}" catchtap="toCollect">收藏</button> -->
         </view>
       </scroll-view>
@@ -62,7 +62,7 @@
       <scroll-view class="scroll_view_H" bindscrolltolower="getCouponMore" scroll-x="true" style="width: 100%">
         <view class="scroll_item" bindlongpress="delBuyCollectCoupon" bindtap="selectCoupon" data-index="{{index}}" wx:for="{{coupon_list}}" wx:key="index">
           <view class="txt">{{item.couponName}}</view>
-          <image src="{{item.coupon}}" mode="widthFix"></image>
+          <image src="{{item.rqcode}}" mode="widthFix"></image>
         </view>
       </scroll-view>
     </view>

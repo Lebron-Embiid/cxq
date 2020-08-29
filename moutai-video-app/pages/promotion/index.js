@@ -450,24 +450,35 @@ Page({
     }
     addCouponAgentList(data).then(res=>{
       if(res.code == 200){
-        for(let i in res.data.records){
-          let random = Math.floor(Math.random()*99999999);
-          let item = res.data.records[i];
-          let base64 = "data:image/png;base64," + item.rqcode;
-          let issued_list = [];
-          base64src(base64,item.couponId,ress=>{
-            this.data.issued_list.push({
-              id: item.couponId,
-              src: ress,
-              certId: item.certId,
-              couponName: item.couponName
-            });
-            this.setData({
-              issued_list: this.data.issued_list,
-              pages: res.data.pages
-            })
+        if(this.data.page == 1){
+          this.setData({
+            issued_list: res.data.records,
+            pages: res.data.pages
+          })
+        }else{
+          this.setData({
+            issued_list: this.data.issued_list.concat(res.data.records),
+            pages: res.data.pages
           })
         }
+        // for(let i in res.data.records){
+        //   let random = Math.floor(Math.random()*99999999);
+        //   let item = res.data.records[i];
+        //   let base64 = "data:image/png;base64," + item.rqcode;
+        //   let issued_list = [];
+        //   base64src(base64,item.couponId,ress=>{
+        //     this.data.issued_list.push({
+        //       id: item.couponId,
+        //       src: ress,
+        //       certId: item.certId,
+        //       couponName: item.couponName
+        //     });
+        //     this.setData({
+        //       issued_list: this.data.issued_list,
+        //       pages: res.data.pages
+        //     })
+        //   })
+        // }
       }
     })
   },
@@ -481,24 +492,35 @@ Page({
     }
     addCouponAgentList(data).then(res=>{
       if(res.code == 200){
-        for(let i in res.data.records){
-          let random = Math.floor(Math.random()*99999999);
-          let item = res.data.records[i];
-          let base64 = "data:image/png;base64," + item.rqcode;
-          let issued_list = [];
-          base64src(base64,item.couponId,ress=>{
-            this.data.issued_list.push({
-              id: item.couponId,
-              src: ress,
-              certId: item.certId,
-              couponName: item.couponName
-            });
-            this.setData({
-              issued_list: this.data.issued_list,
-              pages: res.data.pages
-            })
+        if(this.data.page == 1){
+          this.setData({
+            issued_list: res.data.records,
+            pages: res.data.pages
+          })
+        }else{
+          this.setData({
+            issued_list: this.data.issued_list.concat(res.data.records),
+            pages: res.data.pages
           })
         }
+        // for(let i in res.data.records){
+        //   let random = Math.floor(Math.random()*99999999);
+        //   let item = res.data.records[i];
+        //   let base64 = "data:image/png;base64," + item.rqcode;
+        //   let issued_list = [];
+        //   base64src(base64,item.couponId,ress=>{
+        //     this.data.issued_list.push({
+        //       id: item.couponId,
+        //       src: ress,
+        //       certId: item.certId,
+        //       couponName: item.couponName
+        //     });
+        //     this.setData({
+        //       issued_list: this.data.issued_list,
+        //       pages: res.data.pages
+        //     })
+        //   })
+        // }
       }
     })
   },
@@ -1160,7 +1182,7 @@ Page({
         if(res.confirm){
           if(that.data.identity == 'boss'){
             delCoupon({
-              couponId: that.data.issued_list[index].id
+              couponId: that.data.issued_list[index].couponId
             }).then((resp)=>{
               if(resp.code == 200){
                 publicFun.getToast(resp.code);

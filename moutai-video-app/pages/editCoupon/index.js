@@ -188,10 +188,10 @@ Page({
     //   publicFun.getToast('请输入促销券面额');
     //   return;
     // }
-    // if(this.data.date == ''){
-    //   publicFun.getToast('请选择促销券有效时间');
-    //   return;
-    // }
+    if(this.data.date == ''){
+      publicFun.getToast('请选择促销券有效时间');
+      return;
+    }
     if(this.data.count == ''){
       publicFun.getToast('请输入促销券有效次数');
       return;
@@ -251,6 +251,10 @@ Page({
     })
   },
   submitForm(e){
+    if(this.data.date == ''){
+      publicFun.getToast('请选择促销券有效时间');
+      return;
+    }
     if(this.data.video_list[0].weseeLink == '' && this.data.video_list[1].weseeLink == '' && this.data.video_list[2].weseeLink == ''){
       publicFun.getToast('请至少上传一个视频链接');
       return;

@@ -19,6 +19,7 @@ Page({
     date: '',
     profit: '',
     frequence: '',
+    buyFrequence: '',
     date_txt: '请选择促销券有效时间',
     is_edit: false,
     couponId: '',
@@ -82,6 +83,7 @@ Page({
             price: res.data!=null?res.data.price:'',
             profit: res.data!=null?res.data.profit:'',
             frequence: res.data!=null?res.data.frequence:'',
+            buyFrequence: res.data!=null?res.data.buyFrequence:'',
             date: res.data!=null?res.data.trem:'',
             date_txt: res.data!=null?res.data.trem:'请选择促销券有效时间',
             face: res.data!=null?res.data.value:'',
@@ -156,6 +158,11 @@ Page({
       frequence: e.detail.value
     })
   },
+  getBuyFrequence(e){
+    this.setData({
+      buyFrequence: e.detail.value
+    })
+  },
   bindDateChange: function(e) {
     console.log('picker发送选择改变，携带值为', e.detail.value)
     this.setData({
@@ -216,6 +223,7 @@ Page({
       count: this.data.count,
       profit: this.data.profit,
       frequence: this.data.frequence,
+      buyFrequence: this.data.buyFrequence,
       value: this.data.face,
       jsonList: JSON.stringify(this.data.video_list),
       status: '0'
@@ -230,6 +238,7 @@ Page({
         count: this.data.count,
         profit: this.data.profit,
         frequence: this.data.frequence,
+        buyFrequence: this.data.buyFrequence,
         value: this.data.face,
         jsonList: JSON.stringify(this.data.video_list),
         status: '0'
@@ -271,6 +280,7 @@ Page({
       count: this.data.count,
       profit: this.data.profit,
       frequence: this.data.frequence,
+      buyFrequence: this.data.buyFrequence,
       value: this.data.face,
       jsonList: JSON.stringify(this.data.video_list),
       status: '1'
@@ -285,6 +295,7 @@ Page({
         count: this.data.count,
         profit: this.data.profit,
         frequence: this.data.frequence,
+        buyFrequence: this.data.buyFrequence,
         value: this.data.face,
         jsonList: JSON.stringify(this.data.video_list),
         status: '1'
@@ -301,6 +312,7 @@ Page({
           count: '',
           profit: '',
           frequence: '',
+          buyFrequence: '',
           face: '',
           video_list: video_list
         })

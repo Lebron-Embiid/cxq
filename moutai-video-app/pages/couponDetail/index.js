@@ -234,7 +234,6 @@ Page({
             fail() {
               wx.openSetting({
                 success(settingdata) {
-                  console.log(settingdata)
                   if (settingdata.authSetting['scope.writePhotosAlbum']) {
                     console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
                   } else {

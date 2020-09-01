@@ -38,8 +38,7 @@ Page({
         }).then(ress=>{
           if(ress.code == 200){
             this.setData({
-              list: this.data.list.concat(ress.data.records),
-              totalPage: ress.data.pages
+              list: this.data.list.concat(ress.data.records)
             })
           }
         })
@@ -54,29 +53,24 @@ Page({
     }).then(res=>{
       if(res.code == 200){
         this.setData({
-          list: this.data.list.concat(res.data.records),
-          totalPage: res.data.pages
+          list: this.data.list.concat(res.data.records)
         })
       }
     })
   },
   loadMore(e){
     if(this.data.activeIndex == 0){
-      if(this.data.page<this.data.totalPage){
-        this.data.page++;
-        this.setData({
-          page: this.data.page
-        })
-        this.getApply();
-      }
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      this.getApply();
     }else{
-      if(this.data.page<this.data.totalPage){
-        this.data.page++;
-        this.setData({
-          page: this.data.page
-        })
-        this.getSeller();
-      }
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      this.getSeller();
     }
   },
   /**

@@ -547,10 +547,11 @@ export function coupon_sell_trend_chart_month() {
   })
 }
 //代理人趋势图:最近七天每天销售劵总[收益])
-export function coupon_agent_profit_trend_chart() {
+export function coupon_agent_profit_trend_chart(data) {
   return request({
     url: "/applet/coupon/coupon_agent_profit_trend_chart",
-    method: "GET"
+    method: "GET",
+    data
   })
 }
 //销售员趋势图:最近10天每天销售劵总[收益])

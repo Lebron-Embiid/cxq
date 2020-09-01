@@ -60,21 +60,17 @@ Page({
   },
   loadMore(e){
     if(this.data.activeIndex == 0){
-      if(this.data.page<this.data.totalPage){
-        this.data.page++;
-        this.setData({
-          page: this.data.page
-        })
-        this.getApply();
-      }
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      this.getApply();
     }else{
-      if(this.data.page<this.data.totalPage){
-        this.data.page++;
-        this.setData({
-          page: this.data.page
-        })
-        this.getAgent();
-      }
+      this.data.page++;
+      this.setData({
+        page: this.data.page
+      })
+      this.getAgent();
     }
   },
   /**

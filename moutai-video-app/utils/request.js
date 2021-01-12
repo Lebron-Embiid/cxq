@@ -14,7 +14,7 @@ function getToken() {
 
 //url地址
 // const requestUrl = 'https://maotaiapi.lcpower.cn';
-// const requestUrl = 'http://192.168.31.115:8080';  //测试地址
+// const requestUrl = 'http://192.168.1.2:8080';  //测试地址
 // const requestUrl = 'http://47.114.123.200:8085';
 const requestUrl = 'https://p.3p3.top';          //线上地址
 

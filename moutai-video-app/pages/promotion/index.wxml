@@ -6,10 +6,10 @@
     <van-button wx:if="{{has_user==1}}" catch:click="changeIdentity" class="change_btn" color="#37444A" type="primary" size="small">切换身份</van-button>
     <view class="person_box">
       <view class="person_info_box">
-        <user-btn bind:mylogin="getUserLogin">
+        <view bindtap="getUserLogin">
           <view class="person_avatar"><image src="{{avatar}}" mode="widthFix"></image></view>
           <view class="person_name">{{id_title}} {{name?name:'点击登录账户'}}</view>
-        </user-btn>
+        </view>
         <!-- <user-phone bind:myphone="getUserPhone" wx:if="{{phone == null || phone == '' && (identity == 'consumer' || identity == '' || identity == null)}}">
           <van-button wx:if="{{name!=''}}" class="phone_btn" color="#37444A" type="primary" size="small">获取手机号</van-button>
         </user-phone> -->

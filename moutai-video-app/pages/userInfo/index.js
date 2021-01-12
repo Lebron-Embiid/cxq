@@ -164,7 +164,20 @@ Page({
     })
   },
   getUserLogin(){
-    this.onShow();
+    // this.onShow();
+    wx.checkSession({
+      success () {
+        console.log('登录未过期');
+        wx.setStorageSync('check', 1)
+      },
+      fail () {
+        console.log('登录已过期');
+        wx.navigateTo({
+          url: '/pages/login/index'
+        })
+        // session_key 已经失效，需要重新执行登录流程
+      }
+    })
   },
   scanCode() {
     wx.scanCode({
@@ -645,6 +658,20 @@ Page({
       current: 0, // 当前显示图片的http链接
       urls: that.data.code_img // 需要预览的图片http链接列表
     })
+  },
+  pageTo(e){
+    console.log(JSON.stringify(e.target.dataset.url))
+    let url = e.target.dataset.url;
+    if(wx.getStorageSync('check') == 1){
+      wx.navigateTo({
+        url: url
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
   },
   changeMyInfo(){
     if(wx.getStorageSync('check') == 1){

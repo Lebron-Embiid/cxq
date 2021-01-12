@@ -1,7 +1,8 @@
 import {
   login,
   getUser,
-  getSessinKey
+  getSessinKey,
+  getInfo
 } from '../../api/user.js'
 Page({
 
@@ -21,7 +22,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    if(wx.getStorageSync('is_auth')){
+      this.setData({
+        is_auth: wx.getStorageSync('is_auth')
+      })
+    }
   },
   getUserInfoFun(e){
     console.log(e)
@@ -35,7 +40,7 @@ Page({
               wx.getUserInfo({
                 success: (res) => {
                   console.log(res)
-                  var userInfo = this.data.userInfo
+                  var userInfo = wx.getStorageSync('loginInfo')
                   var nickName = userInfo.nickName
                   var avatarUrl = userInfo.avatarUrl
                   //登录调用
@@ -49,8 +54,12 @@ Page({
                   }).then(logRes => {
                     if(logRes.code == 200){
                       wx.setStorageSync('token', logRes.data.token);
-                      wx.redirectTo({
-                        url: "/pages/userInfo/index"
+                      getInfo().then(login_res=>{
+                        if(login_res.code == 200){
+                          wx.setStorageSync('userInfo', login_res.data);
+                          wx.setStorageSync('login_update',1)
+                          wx.navigateBack();
+                        }
                       })
                     }
                   }).catch(err => {
@@ -72,6 +81,8 @@ Page({
   userInfo() {
     wx.getUserInfo({
       success: (res) => {
+        wx.setStorageSync('is_auth', true)
+        wx.setStorageSync('loginInfo', res.userInfo)
         this.setData({
           userInfo: res.userInfo,
           is_auth: true

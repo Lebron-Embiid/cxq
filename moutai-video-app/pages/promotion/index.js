@@ -248,7 +248,20 @@ Page({
     })
   },
   getUserLogin(){
-    this.onShow();
+    // this.onShow();
+    wx.checkSession({
+      success () {
+        console.log('登录未过期');
+        wx.setStorageSync('check', 1)
+      },
+      fail () {
+        console.log('登录已过期');
+        wx.navigateTo({
+          url: '/pages/login/index'
+        })
+        // session_key 已经失效，需要重新执行登录流程
+      }
+    })
   },
   /**
    * 生命周期函数--监听页面隐藏
@@ -933,7 +946,7 @@ Page({
         // });
         let data = res.result.replace("https://p.3p3.top?data=","");
         wx.setStorage({
-          data: data,
+          data: encodeURIComponent(res.result),
           key: 'params',
         })
         wx.navigateTo({

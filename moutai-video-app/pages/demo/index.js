@@ -14,17 +14,19 @@ Page({
     console.log('111微信扫码接收'+JSON.stringify(options.q))
     var data = '';
     if(wx.getStorageSync('params')){
-      data = wx.getStorageSync('params');
+      data = decodeURIComponent(wx.getStorageSync('params'));
+      data = data.replace("https://p.3p3.top?data=","");
       console.log('扫码接收的参数'+data);
     }else{
       //解析url地址
       // console.log(options.q)
       let newUrl = decodeURIComponent(options.q);
       //获取对应number参数
-      data = wx.getQueryString({
-        url: newUrl,
-        name: "data"
-      });
+      // data = wx.getQueryString({
+      //   url: newUrl,
+      //   name: "data"
+      // });
+      data = newUrl.replace("https://p.3p3.top?data=","");
       // let data = res.result.replace("https://p.3p3.top?data=","");
       console.log('222微信扫码接收的参数'+data);
     }

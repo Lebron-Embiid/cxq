@@ -29,7 +29,7 @@ Page({
           name: "data"
         });
         wx.setStorage({
-          data: data,
+          data: encodeURIComponent(res.result),
           key: 'params',
         })
         wx.navigateTo({

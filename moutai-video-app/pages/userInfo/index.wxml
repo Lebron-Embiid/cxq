@@ -4,10 +4,10 @@
 <view class="back">
   <image src="/assets/home.png" class="home_icon" bindtap="toPromotionPage"></image>
   <view class="user">
-    <user-btn bind:mylogin="getUserLogin">
+    <view bindtap="getUserLogin">
       <van-image custom-class="avatar" round width="140rpx" height="140rpx" src="{{avatar}}" />
       <text class="name">{{name?name:'点击登录账户'}}</text>
-    </user-btn>
+    </view>
   </view>
 </view>
 <view>

@@ -211,6 +211,21 @@ Page({
       publicFun.getToast('请至少上传一个视频链接');
       return;
     }
+    for(let i in this.data.video_list){
+      if(this.data.video_list[i].weseeLink.indexOf('challenge') != '-1'){
+        // 微视挑战类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[0].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
+	  
+      if(this.data.video_list[i].weseeLink.indexOf('isee.weishi') != '-1'){
+        // 微视isee类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[1].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
+    }
     // if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
     //   publicFun.getToast('请填写视频名称');
     //   return;
@@ -267,6 +282,21 @@ Page({
     if(this.data.video_list[0].weseeLink == '' && this.data.video_list[1].weseeLink == '' && this.data.video_list[2].weseeLink == ''){
       publicFun.getToast('请至少上传一个视频链接');
       return;
+    }
+    for(let i in this.data.video_list){
+      if(this.data.video_list[i].weseeLink.indexOf('challenge') != '-1'){
+        // 微视挑战类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[0].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
+	  
+      if(this.data.video_list[i].weseeLink.indexOf('isee.weishi') != '-1'){
+        // 微视isee类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[1].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
     }
     // if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
     //   publicFun.getToast('请填写视频名称');

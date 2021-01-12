@@ -207,14 +207,14 @@ Page({
   },
   downloadImg(){
     var that = this;
-    console.log('下载的图片'+that.data.save_src)
+    console.log('下载的图片'+that.data.src)
     wx.showModal({
       title: '提示',
       content: '确定下载促销券图片？',
       success: function(res) {
         if(res.confirm){
           wx.downloadFile({
-            url: that.data.save_src,
+            url: that.data.src,
             success: (ress) => {
               if (ress.statusCode === 200) {
                 console.log(ress.tempFilePath);
@@ -231,16 +231,19 @@ Page({
                 })
               }
             },
-            fail() {
-              wx.openSetting({
-                success(settingdata) {
-                  if (settingdata.authSetting['scope.writePhotosAlbum']) {
-                    console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
-                  } else {
-                    console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+            fail(err) {
+              if(err.errMsg === "saveImageToPhotosAlbum:fail:auth denied") {
+                wx.openSetting({
+                  success(settingdata) {
+                    console.log(settingdata)
+                    if (settingdata.authSetting["scope.writePhotosAlbum"]) {
+                      console.log("获取权限成功，再次点击图片保存到相册")
+                    } else {
+                      console.log("获取权限失败")
+                    }
                   }
-                }
-              })
+                })
+              }
               publicFun.getToast('下载失败');
             }
           })

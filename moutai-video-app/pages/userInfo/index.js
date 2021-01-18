@@ -78,12 +78,10 @@ Page({
         that.getUserInfo();
         // 用户二维码
         showUserQRCode().then((res)=>{
-          const base64ImgUrl = "data:image/png;base64," + res.data;
-          base64src(base64ImgUrl,'userCode',ress=>{
-            that.setData({
-              user_code: ress
-            })
-          })
+          let base64ImgUrl = "data:image/png;base64," + res.data;
+		  that.setData({
+		    user_code: base64ImgUrl
+		  })
         })
       },
       fail () {
@@ -99,12 +97,10 @@ Page({
   getUserInfo(){
     // 用户二维码
     showUserQRCode().then((res)=>{
-      const base64ImgUrl = "data:image/png;base64," + res.data;
-      base64src(base64ImgUrl,'userCode',ress=>{
-        this.setData({
-          user_code: ress
-        })
-      })
+		let base64ImgUrl = "data:image/png;base64," + res.data;
+		this.setData({
+		  user_code: base64ImgUrl
+		})
     })
     getInfo().then(res=>{
       if(res.code == 401){
